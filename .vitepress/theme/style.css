@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+@source "../**/*.{vue,ts,mts,js}";
+@source "../../docs/**/*.md";
+
+html {
+  font-family: Arial, Helvetica;
+}
+

@@ -5,16 +5,17 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "spec:dev": "vitepress dev",
-    "spec:build": "vitepress build",
-    "spec:preview": "vitepress preview"
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.33.0",
   "devDependencies": {
-    "vite": "7.3.5",
+    "@tailwindcss/vite": "^4.3.1",
+    "tailwindcss": "^4.3.1",
     "vitepress": "2.0.0-alpha.17"
   }
 }
