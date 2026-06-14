@@ -1,12 +1,16 @@
 ---
 title: サインアップ API
-description: POST /signup — 新規ユーザーアカウントを作成し、認証用トークンを発行する
-category: API
+description: 新規ユーザーアカウントを作成し、認証用トークンを発行する
+subcategory: 認証
+method: POST
+path: /signup
 status: 承認済み
+updated: 2026-06-12
 dependsOn:
-  - ./architecture.md
+  - api/auth/scope
 related:
-  - ../../guide/api-format.md
+  - guide/api-format
+  - ui/auth/login
 ---
 
 # API情報

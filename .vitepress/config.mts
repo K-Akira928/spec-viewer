@@ -8,6 +8,18 @@ export default defineConfig({
   title: "SpecViewer",
   description: "設計書を閲覧するためのサイトです",
 
+  // ダークモード: OS 設定を既定にしつつ手動切替可（localStorage 保存・フラッシュ防止 inline script 付き）
+  appearance: true,
+
+  head: [
+    ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
+    ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
+    ['link', {
+      rel: 'stylesheet',
+      href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
+    }]
+  ],
+
   vite: {
     plugins: [tailwindcss()]
   }

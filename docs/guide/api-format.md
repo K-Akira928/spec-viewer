@@ -1,10 +1,12 @@
 ---
 title: API設計フォーマット
 description: APIセクションの設計書の書き方 — セクション構成と記述規約
-category: ガイド
+subcategory: フォーマット
 status: 承認済み
+updated: 2026-06-07
 related:
-  - ../api/auth/signup.md
+  - api/auth/signup
+  - guide/writing
 ---
 
 # API設計フォーマット
@@ -102,5 +104,5 @@ POST
 
 ## 4. 関連ドキュメント
 
-- [DESIGN.md](../../DESIGN.md) — サイト設計仕様・データモデル（frontmatter）
+- `DESIGN.md` — サイト設計仕様・データモデル（frontmatter）。srcDir 外のため公開サイトからは参照不可
 - 認証・認可アーキテクチャ — スコープ・トークン設計の参照元

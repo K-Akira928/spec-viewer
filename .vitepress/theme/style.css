@@ -1,9 +1,93 @@
 @import "tailwindcss";
 
+/* VitePress が <html> に付与する .dark クラスで dark: を発火させる */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @source "../**/*.{vue,ts,mts,js}";
 @source "../../docs/**/*.md";
 
-html {
-  font-family: Arial, Helvetica;
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-300: #a5b4fc;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
 }
 
+/* ステータスドット — モックアップ準拠。色は Tailwind クラスで付与する */
+@utility status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 99px;
+  display: inline-block;
+}
+
+body {
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* 検索ハイライト（モック07準拠。dark は <html>.dark 内で上書き） */
+mark {
+  background: #fef08a;
+  color: #713f12;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+.dark mark {
+  background: rgba(250, 204, 21, 0.35);
+  color: #fde68a;
+}
+
+/* doc 本文（<Content /> = Markdown）。カスタムテーマなので標準スタイルを自前で用意 */
+.prose-doc h2 { font-size: 1.75rem; font-weight: 700; color: #0f172a; letter-spacing: -.01em; margin: 2.4em 0 .7em; padding-top: .2em; border-top: 1px solid #f1f5f9; scroll-margin-top: 90px; }
+.prose-doc h3 { font-size: 1.2rem; font-weight: 600; color: #0f172a; margin: 1.8em 0 .5em; scroll-margin-top: 90px; }
+.prose-doc h4 { font-size: 1rem; font-weight: 600; color: #0f172a; margin: 1.4em 0 .4em; }
+.prose-doc p { margin: .8em 0; color: #334155; line-height: 1.8; }
+.prose-doc ul, .prose-doc ol { margin: .8em 0; padding-left: 1.4em; }
+.prose-doc li { margin: .4em 0; color: #334155; line-height: 1.7; }
+.prose-doc a { color: #4f46e5; text-decoration: none; border-bottom: 1px solid #c7d2fe; }
+.prose-doc a:hover { border-color: #4f46e5; }
+.prose-doc strong { color: #0f172a; font-weight: 600; }
+.prose-doc :not(pre) > code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; background: #f1f5f9; color: #4f46e5; padding: .12em .4em; border-radius: 5px; }
+.prose-doc pre { background: #0f172a; color: #e2e8f0; border-radius: 12px; padding: 18px 20px; overflow-x: auto; font-size: 13.5px; line-height: 1.7; margin: 1.2em 0; }
+.prose-doc pre code { font-family: 'JetBrains Mono', ui-monospace, monospace; background: none; color: inherit; padding: 0; font-size: inherit; }
+.prose-doc blockquote { border-left: 3px solid #c7d2fe; padding-left: 1em; color: #64748b; margin: 1.2em 0; }
+.prose-doc table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 1.2em 0; }
+.prose-doc table th, .prose-doc table td { border-bottom: 1px solid #e2e8f0; padding: 10px 14px; text-align: left; vertical-align: top; }
+.prose-doc table th { background: #f8fafc; font-weight: 600; color: #475569; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.prose-doc table td code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; color: #4f46e5; }
+.prose-doc hr { border: none; border-top: 1px solid #e2e8f0; margin: 2em 0; }
+
+/* doc 本文: dark */
+.dark .prose-doc h2, .dark .prose-doc h3, .dark .prose-doc h4 { color: #f1f5f9; }
+.dark .prose-doc h2 { border-top-color: #1e293b; }
+.dark .prose-doc p, .dark .prose-doc li { color: #cbd5e1; }
+.dark .prose-doc strong { color: #f1f5f9; }
+.dark .prose-doc :not(pre) > code { background: #1e293b; color: #a5b4fc; }
+.dark .prose-doc a { color: #a5b4fc; border-bottom-color: #4f46e5; }
+.dark .prose-doc blockquote { border-left-color: #4f46e5; color: #94a3b8; }
+.dark .prose-doc table th { background: #1e293b; color: #94a3b8; }
+.dark .prose-doc table th, .dark .prose-doc table td { border-bottom-color: #1e293b; }
+.dark .prose-doc table td code { color: #a5b4fc; }
+.dark .prose-doc hr { border-top-color: #1e293b; }
+
+/* TOC（on-this-page） */
+.toc-link { display: block; padding: 5px 10px; border-radius: 6px; font-size: 13px; color: #64748b; line-height: 1.4; border-left: 2px solid transparent; }
+.toc-link:hover { color: #0f172a; }
+.toc-link.sub { padding-left: 22px; font-size: 12.5px; }
+.dark .toc-link { color: #94a3b8; }
+.dark .toc-link:hover { color: #f1f5f9; }
+
+/* 依存関係マップのキャンバス（ドットグリッド） */
+.canvas-grid {
+  background-color: #fbfbfd;
+  background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+.dark .canvas-grid {
+  background-color: #0f172a;
+  background-image: radial-gradient(#1e293b 1px, transparent 1px);
+}

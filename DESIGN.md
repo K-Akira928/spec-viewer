@@ -41,13 +41,22 @@
 | **画面** | 画面設計書・UI仕様・画面遷移 |
 | **ガイド** | 執筆ガイドライン・テンプレート・規約 |
 
+セクションとディレクトリ（URL）の対応（確定）:
+
+| セクション | ディレクトリ | URL |
+|---|---|---|
+| API | `docs/api/` | `/api/` |
+| 画面 | `docs/ui/` | `/ui/` |
+| ガイド | `docs/guide/` | `/guide/` |
+
+> 「画面」セクションの URL 表現は `ui`（画面設計 = UI）。日本語「画面」は URL に不適なため。
 > 旧候補（アーキテクチャ / データ / セキュリティ / 運用）は、この3分類の**下位（サブカテゴリ or タグ）**に回す。
 
 ### 3.1 配下構造（決定: ② サブカテゴリツリー）
 
 `セクション → サブカテゴリ → 文書` の **2階層ツリー**。
 文書規模は数百件程度を想定するため、フラットではなくツリーを採用。
-サブカテゴリは **ディレクトリ構造**で表現する（例: `docs/api/auth/*.md`）。
+section は **ディレクトリ第1階層**（`docs/api/` 等）、サブカテゴリは **frontmatter の `subcategory`** で表現する（英 directory + 日本語表示のため）。
 
 ## 4. データモデル（frontmatter）
 
@@ -58,22 +67,19 @@
 ---
 title: 認証・認可アーキテクチャ
 description: OAuth 2.1 / OIDC を用いた…   # 一覧・OGP で使用
-category: API              # 第1階層: API | 画面 | ガイド（ディレクトリから自動取得も可）
+subcategory: 認証           # サブカテゴリ（frontmatter で指定）
 status: 承認済み            # ドラフト | レビュー中 | 承認済み | 廃止
-reviewers: [佐藤, 鈴木]
-created: 2026-01-10
-updated: 2026-06-12        # 最終更新日（改訂履歴は持たない）
-dependsOn:                 # 依存している文書（方向的・パス配列）
-  - ../../guide/architecture-overview.md
-related:                   # 関連文書（参照用・パス配列）
-  - ./signup.md
-  - ../../ops/runbook.md
+updated: 2026-06-12        # 最終更新日（YYYY-MM-DD）
+dependsOn:                 # 依存している文書（方向的・docs/ からの path 配列）
+  - guide/architecture-overview
+related:                   # 関連文書（参照用・docs/ からの path 配列）
+  - api/auth/signup
 ---
 ```
 
-> **注:** `id` / `author` / `tags` は廃止 — 識別子はファイルパス。`revision` / 改訂履歴も削除済み。
-> `dependsOn` = この文書が依存する文書（方向的）。`related` = 関連文書（参照用）。ともに相対パスで指定。
-> サブカテゴリは frontmatter ではなく **ディレクトリパス** から導出する（§3.1）。
+> **注:** `id` / `author` / `tags` / `category` / `reviewers` / `created` は廃止 — 識別子はファイルパス、section はディレクトリから導出。`revision` / 改訂履歴も削除済み。
+> `dependsOn` = この文書が依存する文書（方向的）。`related` = 関連文書（参照用）。ともに docs/ からの相対 **path**（.md 無し）で指定する（title の揺らぎでリンク切れしない・エディタのパス補完が効く）。
+> section はディレクトリ第1階層から導出、`subcategory` は frontmatter で指定する（英 directory + 日本語表示のため）。
 
 ## 5. デザイン方向
 
@@ -85,6 +91,27 @@ related:                   # 関連文書（参照用・パス配列）
 - 角丸: `rounded-xl`、余白多め、細いボーダー
 
 > 初期検討では公文書風（RFC）・ターミナル風・ミニマル風も比較検討したが、可読性と汎用性から Reference を採用（比較案のモックアップは削除済み）。
+
+### 5.1 ダークモード（確定）
+
+VitePress の `appearance` + Tailwind v4 の `@custom-variant dark`（`.dark` クラス方式）で実装。ヘッダーのトグル（月↔太陽）で切替。OS 設定を既定とし、手動切替は localStorage に保存・フラッシュ防止 inline script 付き。
+
+配色マッピング（ライト → ダーク）:
+
+| 用途 | ライト | ダーク |
+|---|---|---|
+| ページ背景 | `bg-white` | `bg-slate-900` |
+| ヘッダー背景 | `bg-white/85` | `bg-slate-900/85` |
+| カード/hover 背景 | `bg-slate-50` / `bg-slate-100` | `bg-slate-800`（hover は `/50`） |
+| 本文テキスト | `text-slate-700` | `text-slate-300` |
+| 見出し | `text-slate-900` | `text-slate-100` |
+| 補助 / 弱 | `text-slate-500` / `text-slate-400` | `text-slate-400` / `text-slate-500` |
+| ボーダー / 区切り | `border-slate-200/100` / `divide-slate-100` | `border-slate-800` / `divide-slate-800` |
+| brand テキスト | `text-brand-600` / `text-brand-700` | `text-brand-400` / `text-brand-300` |
+| brand バッジ背景 | `bg-brand-50` | `bg-brand-500/10` |
+| ステータス（emerald/amber/sky） | `bg-*-50 text-*-600/700` | `bg-*-500/10 text-*-400` |
+
+アクセント（`brand-600` 背景・ステータスドット `bg-*-500`）はライト/ダーク共通で維持。
 
 ## 6. ヘッダー仕様（確定）
 
@@ -156,11 +183,11 @@ related:                   # 関連文書（参照用・パス配列）
 
 | 画面 | 状態 | サイドバー | 備考 |
 |---|---|---|---|
-| ホーム / ランディング | モックアップ（最新） | **なし**（フルワイド） | ヒーロー(バッジ＋タイトル＋コピー・CTAなし)＋セクションカード(API/画面/ガイド)＋最近の更新。統計なし |
-| セクション一覧 | モックアップ（最新） | あり | フィルタツールバー(ステータス/サブカテゴリ/並び順)＋文書リスト(行型) |
-| 詳細 / 閲覧 | モックアップ（最新） | あり | 本文＋目次＋メタ |
-| 検索 | モックアップ（最新） | —（モーダル） | パレット型（⌘K／インラインバー起動）。ハイライト・セクション絞り込み・キーボード操作 |
-| 依存関係マップ | モックアップ（最新） | — | グラフ（ノード・リンク）・文書フォーキス。左セレクタ／中央グラフ／右詳細。`dependsOn` を可視化 |
+| ホーム / ランディング | 実装済 | **なし**（フルワイド） | ヒーロー(バッジ＋タイトル＋コピー・CTAなし)＋セクションカード(API/画面/ガイド)＋最近の更新。統計なし |
+| セクション一覧 | 実装済 | あり | フィルタツールバー(ステータス/サブカテゴリ/並び順)＋文書リスト(行型)。ステータスフィルタ・サブカテゴリ/並び順ドロップダウン・サイドバー折たたみ(Ctrl+B)すべて実装済 |
+| 詳細 / 閲覧 | 実装済 | あり | パンくず＋サイドバー（共通 Sidebar.vue）＋doc header（status/タイトル/メタ）＋本文（prose-doc）＋prev/next＋TOC。TOC は onContentUpdated で DOM から H2/H3 抽出（VitePress 2.0 は page.headers が空のため） |
+| 検索 | 実装済（プロトタイプ） | —（モーダル） | パレット型（⌘K／インラインバー起動）。ハイライト・セクション絞り込み・キーボード操作。docs-data モック検索（minisearch による本文検索は後段） |
+| 依存関係マップ | 実装済（プロトタイプ） | — | 3カラム（セレクタ／SVGグラフ／詳細）。文書フォーカス型、ノードクリックで中心切替。`dependsOn`（前提）と被依存（影響先）を可視化。深さ2・範囲フィルタは後段 |
 
 ## 11. モックアップ
 
@@ -180,7 +207,7 @@ related:                   # 関連文書（参照用・パス配列）
 主要な設計要素は確定済み。残るは実装段階の詳細:
 
 - [ ] ステータス値の最終定義（ドラフト/レビュー中/承認済み/廃止）
-- [ ] ダークモードの配色トークン
+- [x] ダークモードの配色トークン（§5.1 に確定）
 - [ ] VitePress 実装（`config.mts` / `Layout.vue` / `index.ts` / `docs/` 構造）
 
 ## 13. API設計フォーマット
@@ -218,3 +245,12 @@ related:                   # 関連文書（参照用・パス配列）
 | 2026-06-14 | 副作用カードの項目を 内容/経路/失敗時 の3項目に固定（対象は見出し/カードタイトル）。執筆時の項目取捨選択を排除し画一化。api-format.md §1.4・signup.md も同構造へ更新。 |
 | 2026-06-14 | 共通ポリシー（共通の失敗時の扱い）を 整合性/主操作失敗時/リトライ/冪等性 の4項目に固定し画一化。api-format.md §1.4 に規約化。 |
 | 2026-06-14 | 非採用モック（02 RFC／03 Console／04 Mono）を削除。ギャラリー（index.html）を採用5画面（01/05/06/07/08）に集約。 |
+| 2026-06-14 | ダークモード切替を実装（VitePress `appearance` + Tailwind v4 `@custom-variant dark`）。配色トークンを §5.1 に確定。 |
+| 2026-06-14 | セクション一覧画面を実装（`SectionList.vue`）。3セクションを1コンポーネントでカバーし、データ層を `docs-data.ts` に集約。「画面」セクションのディレクトリを `docs/ui/` に確定。ホームと双方向リンク。 |
+| 2026-06-14 | サイドバーのサブカテゴリツリー折りたたみ（▾/▸）を実装。展開状態はセクション別に localStorage（`sv-tree-{section}`）で保持。デフォルトは全展開。 |
+| 2026-06-14 | サブカテゴリ/並び順ドロップダウンを実装。フィルタ（ステータス・サブカテゴリ）とソート（更新順・タイトル順）が動作。外側クリック/Esc で閉じる。`onClickOutside` は `@vueuse/core` 非依存の自前実装。 |
+| 2026-06-14 | 検索パレット（07）を実装: ⌘K 起動、部分一致検索、`<mark>` ハイライト、セクション絞り込み、キーボード操作（↑↓↵esc）。対象は docs-data モック。minisearch（docs/*.md 本文検索）は後段。`cleanUrls: true` も設定し SPA 同一タブ遷移を修正。 |
+| 2026-06-14 | 詳細/閲覧画面（05）を実装（Doc.vue）。サイドバーを Sidebar.vue に抽出し SectionList と共有（現文書の active 表示・サブカテゴリツリー折たたみ・Ctrl+B 全体折たたみ）。doc header（status/タイトル/section › subcategory/description）＋本文（prose-doc スタイル）＋prev/next＋TOC（onContentUpdated で H2/H3 抽出）。不要な VitePress サンプル（api-examples/markdown-examples）を削除。 |
+| 2026-06-14 | 依存関係マップ（08）を実装（DepsMap.vue）。3カラム（セレクタ／SVGグラフ／詳細）、文書フォーカス型。docs-data に `dependsOn`/`related` を追加し、ノードクリックで中心切替。Doc 画面の「依存関係マップ」ボタンから `/deps/` へリンク。深さ2・範囲フィルタは後段。 |
+| 2026-06-14 | 実データ駆動へ移行。docs-data.ts をモック配列から `import.meta.glob('../../docs/**/*.md')` による frontmatter 走査に変更。実データ文書8件を追加（api: signup/token/session/scope/order-api/order-state/payment-api、ui: login、guide: writing + api-format 更新）。`subcategory` を frontmatter 化（§3.1/§4 更新）。`dependsOn`/`related` を title 参照に統一。文書追加は .md を置くだけで全画面に反映。 |
+| 2026-06-14 | `dependsOn`/`related` を title 参照から docs/ からの相対 **path** 参照に変更（title 揺らぎ耐性・パス補完）。docs-data に `SpecDoc.path`/`docByPath`/`dependentsOf(path)` を追加。全実データ frontmatter を path 参照に更新。 |
