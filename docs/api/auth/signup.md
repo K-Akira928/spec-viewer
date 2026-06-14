@@ -8,6 +8,7 @@ status: 承認済み
 updated: 2026-06-12
 dependsOn:
   - api/auth/scope
+  - db/schema/users
 related:
   - guide/api-format
   - ui/auth/login

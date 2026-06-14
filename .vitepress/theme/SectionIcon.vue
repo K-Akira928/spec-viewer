@@ -1,7 +1,8 @@
 <script setup lang="ts">
-// セクションアイコン。API=brackets / 画面=monitor / ガイド=book。
+// セクションアイコン。API=brackets / 画面=monitor / DB=database / ガイド=book。
 // size/color は親から class で指定（w-5 h-5 等）。stroke は currentColor
-defineProps<{ section: 'api' | 'ui' | 'guide' }>()
+import type { SectionKey } from './docs-data'
+defineProps<{ section: SectionKey }>()
 </script>
 
 <template>
@@ -13,6 +14,12 @@ defineProps<{ section: 'api' | 'ui' | 'guide' }>()
   <svg v-else-if="section === 'ui'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
     <rect x="3" y="4" width="18" height="13" rx="2" />
     <path d="M8 21h8M12 17v4" />
+  </svg>
+  <!-- DB: database cylinder -->
+  <svg v-else-if="section === 'db'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <ellipse cx="12" cy="5" rx="9" ry="3" />
+    <path d="M3 5v6c0 1.66 4.03 3 9 3s9-1.34 9-3V5" />
+    <path d="M3 11v6c0 1.66 4.03 3 9 3s9-1.34 9-3v-6" />
   </svg>
   <!-- ガイド: book -->
   <svg v-else fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">

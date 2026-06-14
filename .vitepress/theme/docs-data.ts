@@ -3,7 +3,7 @@
 // 文書を増やすには docs/{api,ui,guide}/.../*.md を追加するだけ（このファイルは触らない）。
 // dependsOn/related は docs/ からの相対 path（.md 無し）で指定する
 
-export type SectionKey = 'api' | 'ui' | 'guide'
+export type SectionKey = 'api' | 'ui' | 'guide' | 'db'
 export type DocStatus = '承認済み' | 'レビュー中' | 'ドラフト'
 
 export interface SpecDoc {
@@ -67,6 +67,17 @@ export const sections: SectionMeta[] = [
     badgeText: 'G',
     accentText: 'text-emerald-600 dark:text-emerald-400',
   },
+  {
+    key: 'db',
+    label: 'DB',
+    description: 'スキーマ・テーブル・インデックス・移行に関する設計書',
+    shortDescription: 'スキーマ・テーブル・インデックス',
+    navHref: '/db/',
+    iconClass: 'bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400',
+    badgeClass: 'bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400',
+    badgeText: 'DB',
+    accentText: 'text-violet-600 dark:text-violet-400',
+  },
 ]
 
 // ステータス → バッジクラス（DESIGN.md §4 / §12）
@@ -98,11 +109,11 @@ interface MarkdownModule {
 // docs/**/*.md をビルド時に走査（eager = 同期、全件取得）
 const modules = import.meta.glob<MarkdownModule>('../../docs/**/*.md', { eager: true })
 
-// path の第1階層（api / ui / guide）を section として導出。該当しなければ空
+// path の第1階層を section として導出。sections に存在するキーかで判定（大カテゴリ追加時に追記不要）
 function deriveSection(path: string): SectionKey | '' {
   // '../../docs/api/auth/signup.md' → parts[3] = 'api'
-  const seg = path.split('/')[3]
-  return seg === 'api' || seg === 'ui' || seg === 'guide' ? seg : ''
+  const seg = path.split('/')[3] as SectionKey
+  return sections.some((s) => s.key === seg) ? seg : ''
 }
 
 // '../../docs/api/auth/signup.md' → 'api/auth/signup'
@@ -111,16 +122,17 @@ function toDocPath(path: string): string {
 }
 
 export const docs: SpecDoc[] = Object.entries(modules)
-  .filter(([path]) => {
-    const parts = path.split('/')
-    // docs/section/(subcategory/)title.md を文書とする。index.md と直下を除外
-    return parts.length >= 5 && !path.endsWith('index.md') && deriveSection(path) !== ''
+  .map(([path, mod]) => ({ path, mod, section: deriveSection(path) }))
+  .filter((e): e is { path: string; mod: MarkdownModule; section: SectionKey } => {
+    const parts = e.path.split('/')
+    // docs/section/(subcategory/)title.md を文書とする。index.md と直下を除外。section が空でない
+    return parts.length >= 5 && !e.path.endsWith('index.md') && e.section !== ''
   })
-  .map(([path, mod]): SpecDoc => {
+  .map(({ path, mod, section }): SpecDoc => {
     const fm = mod.__pageData.frontmatter
     const docPath = toDocPath(path)
     return {
-      section: deriveSection(path),
+      section,
       subcategory: String(fm.subcategory ?? ''),
       title: String(fm.title ?? mod.__pageData.title),
       description: String(fm.description ?? mod.__pageData.description ?? ''),
