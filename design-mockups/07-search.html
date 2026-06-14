@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>検索 — SpecViewer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: { extend: {
+      fontFamily: { sans: ['Inter','system-ui','sans-serif'] },
+      colors: { brand:{50:'#eef2ff',100:'#e0e7ff',500:'#6366f1',600:'#4f46e5',700:'#4338ca'} }
+    }}
+  }
+</script>
+<style>
+  body{font-feature-settings:"cv02","cv03","cv04","cv11";}
+  mark{background:#fef08a;color:#713f12;border-radius:3px;padding:0 2px;}
+  kbd{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;}
+</style>
+</head>
+<body class="font-sans antialiased text-slate-700">
+
+  <!-- 背景のコンテキスト（ホームを薄く表示） -->
+  <div class="min-h-screen bg-white">
+    <header class="border-b border-slate-200/80">
+      <div class="mx-auto max-w-7xl px-6 h-16 flex items-center gap-6 opacity-50">
+        <div class="flex items-center gap-2 font-semibold text-slate-900">
+          <span class="grid place-items-center w-7 h-7 rounded-lg bg-brand-600 text-white text-sm">S</span>
+          SpecViewer
+        </div>
+        <nav class="hidden md:flex items-center gap-1 text-sm text-slate-400">
+          <span class="px-3 py-1.5">API</span><span class="px-3 py-1.5">画面</span><span class="px-3 py-1.5">ガイド</span>
+        </nav>
+      </div>
+    </header>
+    <div class="mx-auto max-w-7xl px-6 pt-16 opacity-30 select-none">
+      <div class="h-10 w-40 rounded-full bg-slate-200 mb-6"></div>
+      <div class="h-12 w-80 rounded-lg bg-slate-200 mb-4"></div>
+      <div class="h-4 w-full max-w-xl rounded bg-slate-100 mb-2"></div>
+      <div class="h-4 w-full max-w-lg rounded bg-slate-100"></div>
+    </div>
+  </div>
+
+  <!-- オーバーレイ ＋ モーダル -->
+  <div class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm" style="overflow-y:auto;">
+    <div class="mx-auto w-full max-w-2xl px-4" style="margin-top:8vh;">
+
+      <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+
+        <!-- input row -->
+        <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-100">
+          <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" value="認証" class="flex-1 outline-none text-lg text-slate-900 placeholder-slate-300 bg-transparent" placeholder="設計書を検索…" autofocus>
+          <kbd class="border border-slate-200 rounded px-1.5 py-0.5 text-slate-400 bg-slate-50">esc</kbd>
+        </div>
+
+        <!-- toolbar: count + section filter -->
+        <div class="flex items-center gap-2 px-5 py-2.5 border-b border-slate-100 bg-slate-50/60">
+          <span class="text-xs text-slate-500 font-medium">5件</span>
+          <div class="ml-auto inline-flex items-center gap-1">
+            <button class="text-xs px-2.5 py-1 rounded-md bg-slate-900 text-white font-medium">すべて</button>
+            <button class="text-xs px-2.5 py-1 rounded-md text-slate-500 hover:bg-slate-100">API 3</button>
+            <button class="text-xs px-2.5 py-1 rounded-md text-slate-500 hover:bg-slate-100">画面 1</button>
+            <button class="text-xs px-2.5 py-1 rounded-md text-slate-500 hover:bg-slate-100">ガイド 1</button>
+          </div>
+        </div>
+
+        <!-- results -->
+        <div class="max-h-[52vh] overflow-y-auto">
+
+          <!-- selected -->
+          <a href="05-reference-reading.html" class="block px-5 py-3.5 bg-brand-50 border-l-2 border-brand-500">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-[11px] font-semibold text-brand-600">API</span>
+              <span class="text-[11px] text-slate-400">› 認証</span>
+            </div>
+            <p class="font-medium text-slate-900 truncate"><mark>認証</mark>・認可アーキテクチャ</p>
+            <p class="text-sm text-slate-500 line-clamp-1">OAuth 2.1 / OIDC を用いた<mark>認証</mark>フローとスコープ設計。外部 IdP との連携…</p>
+          </a>
+
+          <a href="#" class="block px-5 py-3.5 hover:bg-slate-50 border-l-2 border-transparent">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-[11px] font-semibold text-brand-600">API</span>
+              <span class="text-[11px] text-slate-400">› 認証</span>
+            </div>
+            <p class="font-medium text-slate-900 truncate">トークン仕様</p>
+            <p class="text-sm text-slate-500 line-clamp-1"><mark>認証</mark>成功時に発行されるアクセストークンとリフレッシュトークンの形式・有効期限…</p>
+          </a>
+
+          <a href="#" class="block px-5 py-3.5 hover:bg-slate-50 border-l-2 border-transparent">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-[11px] font-semibold text-sky-600">画面</span>
+              <span class="text-[11px] text-slate-400">› ログイン</span>
+            </div>
+            <p class="font-medium text-slate-900 truncate">ログイン画面 仕様書</p>
+            <p class="text-sm text-slate-500 line-clamp-1"><mark>認証</mark>画面のUI要素・バリデーション・エラー表示の要件…</p>
+          </a>
+
+          <a href="#" class="block px-5 py-3.5 hover:bg-slate-50 border-l-2 border-transparent">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-[11px] font-semibold text-emerald-600">ガイド</span>
+            </div>
+            <p class="font-medium text-slate-900 truncate">執筆ガイドライン</p>
+            <p class="text-sm text-slate-500 line-clamp-1"><mark>認証</mark>・決済など機密性の高い領域の文書を執筆する際の注意点…</p>
+          </a>
+
+          <a href="#" class="block px-5 py-3.5 hover:bg-slate-50 border-l-2 border-transparent">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-[11px] font-semibold text-brand-600">API</span>
+              <span class="text-[11px] text-slate-400">› 認証</span>
+            </div>
+            <p class="font-medium text-slate-900 truncate">スコープ設計</p>
+            <p class="text-sm text-slate-500 line-clamp-1">リソース:操作 のスコープ体系。<mark>認証</mark>後に付与される既定スコープの一覧…</p>
+          </a>
+
+        </div>
+
+        <!-- footer hints -->
+        <div class="flex items-center gap-4 px-5 py-3 border-t border-slate-100 bg-slate-50/60 text-xs text-slate-400">
+          <span class="flex items-center gap-1.5"><kbd class="border rounded px-1.5 py-0.5 bg-white">↑</kbd><kbd class="border rounded px-1.5 py-0.5 bg-white">↓</kbd> 選択</span>
+          <span class="flex items-center gap-1.5"><kbd class="border rounded px-1.5 py-0.5 bg-white">↵</kbd> 開く</span>
+          <span class="flex items-center gap-1.5"><kbd class="border rounded px-1.5 py-0.5 bg-white">esc</kbd> 閉じる</span>
+          <span class="ml-auto">VitePress local search で動作</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

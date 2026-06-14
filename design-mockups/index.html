@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpecViewer — 画面モックアップ</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Inter',system-ui,sans-serif;background:#fafaf9;color:#171717;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 28px;}
+  .label{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#9a9a96;}
+  .card{display:block;border:1px solid #ececea;border-radius:16px;overflow:hidden;background:#fff;transition:transform .15s, box-shadow .15s;text-decoration:none;color:inherit;}
+  .card:hover{transform:translateY(-3px);box-shadow:0 18px 40px -22px rgba(0,0,0,.25);}
+  .thumb{height:120px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;position:relative;font-family:ui-monospace,monospace;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;}
+  h1{font-size:38px;letter-spacing:-.03em;margin:0;font-weight:700;}
+  code.inl{font-family:ui-monospace,monospace;font-size:13px;background:#f1f5f9;padding:1px 5px;border-radius:4px;}
+</style>
+</head>
+<body>
+  <section class="wrap" style="padding:64px 28px 16px;">
+    <div class="label" style="margin-bottom:16px;">SpecViewer · 画面モックアップ</div>
+    <h1>採用画面 — 5つ</h1>
+    <p style="margin-top:14px;max-width:600px;color:#525252;font-size:16px;line-height:1.6;">
+      採用方向（Reference）で作成したモックアップ。設計仕様は <code class="inl">DESIGN.md</code> を参照。
+    </p>
+  </section>
+
+  <section class="wrap" style="padding:24px 28px 80px;">
+    <div class="grid">
+
+      <a class="card" href="01-reference.html">
+        <div class="thumb" style="background:linear-gradient(135deg,#4f46e5,#6366f1);color:rgba(255,255,255,.9);">
+          01 · ホーム
+        </div>
+        <div style="padding:20px;">
+          <div class="label" style="margin-bottom:8px;">Home / Landing</div>
+          <div style="font-size:19px;font-weight:600;letter-spacing:-.01em;">ホーム</div>
+          <p style="margin:8px 0 0;font-size:14px;color:#525252;line-height:1.55;">
+            ヒーロー・セクションカード（API/画面/ガイド）・最近の更新。フルワイド。
+          </p>
+        </div>
+      </a>
+
+      <a class="card" href="06-section-list.html">
+        <div class="thumb" style="background:#f8fafc;color:#4f46e5;border-bottom:1px solid #ececea;">
+          06 · セクション一覧
+        </div>
+        <div style="padding:20px;">
+          <div class="label" style="margin-bottom:8px;">Section / Browse</div>
+          <div style="font-size:19px;font-weight:600;letter-spacing:-.01em;">セクション一覧</div>
+          <p style="margin:8px 0 0;font-size:14px;color:#525252;line-height:1.55;">
+            フィルタツールバー（ステータス・サブカテゴリ・並び順）＋文書リスト（行型）。
+          </p>
+        </div>
+      </a>
+
+      <a class="card" href="05-reference-reading.html">
+        <div class="thumb" style="background:#f8fafc;color:#4f46e5;border-bottom:1px solid #ececea;">
+          05 · 詳細
+        </div>
+        <div style="padding:20px;">
+          <div class="label" style="margin-bottom:8px;">Detail / Reading</div>
+          <div style="font-size:19px;font-weight:600;letter-spacing:-.01em;">詳細（サインアップ API）</div>
+          <p style="margin:8px 0 0;font-size:14px;color:#525252;line-height:1.55;">
+            本文＋右目次。副作用スキーマ・Gherkin シナリオの構造化レンダリング。
+          </p>
+        </div>
+      </a>
+
+      <a class="card" href="07-search.html">
+        <div class="thumb" style="background:#0f172a;color:#facc15;border-bottom:1px solid #ececea;">
+          07 · 検索
+        </div>
+        <div style="padding:20px;">
+          <div class="label" style="margin-bottom:8px;">Search / Palette</div>
+          <div style="font-size:19px;font-weight:600;letter-spacing:-.01em;">検索パレット</div>
+          <p style="margin:8px 0 0;font-size:14px;color:#525252;line-height:1.55;">
+            ⌘K／ヘッダー検索で起動。ハイライト・セクション絞り込み・キーボード操作。
+          </p>
+        </div>
+      </a>
+
+      <a class="card" href="08-deps.html">
+        <div class="thumb" style="background:#fbfbfd;color:#6366f1;border-bottom:1px solid #ececea;">
+          08 · 依存マップ
+        </div>
+        <div style="padding:20px;">
+          <div class="label" style="margin-bottom:8px;">Dependencies / Graph</div>
+          <div style="font-size:19px;font-weight:600;letter-spacing:-.01em;">依存関係マップ</div>
+          <p style="margin:8px 0 0;font-size:14px;color:#525252;line-height:1.55;">
+            文書フォーカスで依存（前提）と被依存（影響先）をグラフ化。
+          </p>
+        </div>
+      </a>
+
+    </div>
+
+    <div style="margin-top:48px;padding:20px 22px;border:1px solid #ececea;border-radius:14px;background:#fff;">
+      <div class="label" style="margin-bottom:8px;">次のステップ</div>
+      <p style="margin:0;color:#525252;font-size:15px;line-height:1.6;">
+        設計は確定済み。次は VitePress 実装（<code class="inl">config.mts</code> / <code class="inl">Layout.vue</code> / <code class="inl">docs/</code> 構築）へ進めます。
+      </p>
+    </div>
+  </section>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>依存関係マップ — SpecViewer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: { extend: {
+      fontFamily: { sans:['Inter','system-ui','sans-serif'], mono:['JetBrains Mono','ui-monospace','monospace'] },
+      colors: { brand:{50:'#eef2ff',100:'#e0e7ff',300:'#a5b4fc',500:'#6366f1',600:'#4f46e5',700:'#4338ca'} }
+    }}
+  }
+</script>
+<style>
+  body{font-feature-settings:"cv02","cv03","cv04","cv11";}
+  .status-dot{width:7px;height:7px;border-radius:99px;display:inline-block;}
+  .canvas-grid{
+    background-color:#fbfbfd;
+    background-image:radial-gradient(#e2e8f0 1px, transparent 1px);
+    background-size:20px 20px;
+  }
+  .doc-link{color:#4f46e5;border-bottom:1px solid #c7d2fe;}
+  .doc-link:hover{border-color:#4f46e5;}
+</style>
+</head>
+<body class="font-sans antialiased text-slate-700 bg-white">
+
+  <!-- header -->
+  <header class="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur">
+    <div class="mx-auto max-w-7xl px-6 h-16 flex items-center gap-6">
+      <a href="01-reference.html" class="flex items-center gap-2 font-semibold text-slate-900 shrink-0">
+        <span class="grid place-items-center w-7 h-7 rounded-lg bg-brand-600 text-white text-sm">S</span>
+        SpecViewer
+      </a>
+      <nav class="hidden md:flex items-center gap-1 text-sm">
+        <a href="06-section-list.html" class="px-3 py-1.5 rounded-md font-medium text-slate-700 hover:bg-slate-100">API</a>
+        <a href="#" class="px-3 py-1.5 rounded-md font-medium text-slate-700 hover:bg-slate-100">画面</a>
+        <a href="#" class="px-3 py-1.5 rounded-md font-medium text-slate-700 hover:bg-slate-100">ガイド</a>
+      </nav>
+      <div class="ml-auto flex items-center gap-2.5">
+        <div class="hidden sm:flex items-center gap-2 text-sm text-slate-400 rounded-lg border border-slate-200 px-3 py-1.5 w-56 lg:w-64 bg-white hover:border-slate-300">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>設計書を検索…</span>
+          <kbd class="ml-auto border rounded px-1.5 py-0.5 text-[10px] bg-slate-50">⌘K</kbd>
+        </div>
+        <button class="grid place-items-center w-9 h-9 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-500" title="ダークモード" aria-label="ダークモード切替">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        </button>
+        <a href="#" class="hidden sm:grid place-items-center w-9 h-9 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-500" title="GitHub" aria-label="GitHub">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- breadcrumb + title -->
+  <div class="border-b border-slate-100">
+    <div class="mx-auto max-w-7xl px-6 py-3 text-xs text-slate-400 flex items-center gap-1.5">
+      <a href="01-reference.html" class="hover:text-slate-600">ホーム</a> <span>/</span>
+      <span class="text-slate-600">依存関係マップ</span>
+    </div>
+  </div>
+
+  <!-- sub toolbar -->
+  <div class="mx-auto max-w-7xl px-6 pt-8">
+    <div class="flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">依存関係マップ</h1>
+        <p class="text-sm text-slate-400 mt-1">文書を選ぶと、依存（前提）と被依存（影響先）を中心に表示します。矢印 A→B は「AがBに依存」。</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="flex items-center gap-1.5 text-sm border border-slate-200 rounded-lg px-3 py-1.5 text-slate-700 hover:bg-slate-50">深さ: 1 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+        <button class="flex items-center gap-1.5 text-sm border border-slate-200 rounded-lg px-3 py-1.5 text-slate-700 hover:bg-slate-50">範囲: すべて <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3-column -->
+  <div class="mx-auto max-w-7xl px-6 py-6 flex gap-6">
+
+    <!-- left: selector -->
+    <aside class="hidden lg:block w-60 shrink-0">
+      <div class="flex items-center gap-2 text-sm text-slate-400 rounded-lg border border-slate-200 px-3 py-2 mb-4 bg-white">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>文書を検索…</span>
+      </div>
+      <p class="px-2 text-[11px] font-semibold tracking-wider text-slate-400 uppercase mb-2">API</p>
+      <nav class="text-sm flex flex-col mb-4">
+        <a class="flex items-center justify-between px-2.5 py-1.5 rounded-md bg-brand-50 text-brand-700 font-medium">
+          認証・認可アーキテクチャ <span class="text-[10px]">●</span>
+        </a>
+        <a class="px-2.5 py-1.5 rounded-md hover:bg-slate-50 text-slate-600">サインアップ API</a>
+        <a class="px-2.5 py-1.5 rounded-md hover:bg-slate-50 text-slate-600">注文 API 仕様</a>
+        <a class="px-2.5 py-1.5 rounded-md hover:bg-slate-50 text-slate-600">決済 API 仕様</a>
+        <a class="px-2.5 py-1.5 rounded-md hover:bg-slate-50 text-slate-600">セッション管理</a>
+      </nav>
+      <p class="px-2 text-[11px] font-semibold tracking-wider text-slate-400 uppercase mb-2">ガイド</p>
+      <nav class="text-sm flex flex-col">
+        <a class="px-2.5 py-1.5 rounded-md hover:bg-slate-50 text-slate-600">システムアーキテクチャ概要</a>
+        <a class="px-2.5 py-1.5 rounded-md hover:bg-slate-50 text-slate-600">API設計フォーマット</a>
+      </nav>
+    </aside>
+
+    <!-- center: graph -->
+    <main class="min-w-0 flex-1">
+      <div class="canvas-grid border border-slate-200 rounded-2xl p-3 overflow-hidden">
+        <svg viewBox="0 0 740 440" class="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#818cf8"/>
+            </marker>
+            <marker id="arrow-faded" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#cbd5e1"/>
+            </marker>
+          </defs>
+
+          <!-- edges (dependent → dependency) -->
+          <!-- 認証 → システムアーキテクチャ -->
+          <path d="M340,195 L300,115" stroke="#818cf8" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+          <!-- 認証 → IdP連携仕様 -->
+          <path d="M340,200 L300,275" stroke="#818cf8" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+          <!-- サインアップ → 認証 -->
+          <path d="M560,94 L500,190" stroke="#818cf8" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+          <!-- セッション管理 → 認証 -->
+          <path d="M560,194 L500,195" stroke="#818cf8" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+          <!-- 監査ログ要件 → 認証 -->
+          <path d="M560,314 L500,200" stroke="#818cf8" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+          <!-- システムArch → ドメインモデル (depth2, faded) -->
+          <path d="M160,115 L130,170" stroke="#cbd5e1" stroke-width="1.5" fill="none" marker-end="url(#arrow-faded)" stroke-dasharray="4 3"/>
+
+          <!-- depth2 node: ドメインモデル (faded) -->
+          <g opacity="0.5">
+            <rect x="10" y="148" width="120" height="44" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+            <circle cx="24" cy="170" r="4" fill="#94a3b8"/>
+            <text x="34" y="174" font-size="12" font-weight="600" fill="#64748b" font-family="Inter,sans-serif">ドメインモデル</text>
+          </g>
+
+          <!-- dependency nodes (left) -->
+          <!-- システムアーキテクチャ概要 (guide) -->
+          <g>
+            <rect x="160" y="88" width="140" height="52" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+            <circle cx="174" cy="108" r="4" fill="#10b981"/>
+            <text x="184" y="112" font-size="12.5" font-weight="600" fill="#0f172a" font-family="Inter,sans-serif">システムアーキテクチャ</text>
+            <text x="174" y="129" font-size="10" fill="#94a3b8" font-family="Inter,sans-serif">ガイド</text>
+          </g>
+          <!-- IdP連携仕様 -->
+          <g>
+            <rect x="160" y="250" width="140" height="52" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+            <circle cx="174" cy="270" r="4" fill="#22c55e"/>
+            <text x="184" y="274" font-size="12.5" font-weight="600" fill="#0f172a" font-family="Inter,sans-serif">IdP 連携仕様</text>
+            <text x="174" y="291" font-size="10" fill="#94a3b8" font-family="Inter,sans-serif">API</text>
+          </g>
+
+          <!-- selected node: 認証・認可アーキテクチャ -->
+          <g>
+            <rect x="340" y="165" width="160" height="62" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="2.5"/>
+            <circle cx="356" cy="187" r="5" fill="#22c55e"/>
+            <text x="368" y="191" font-size="13" font-weight="700" fill="#0f172a" font-family="Inter,sans-serif">認証・認可アーキテクチャ</text>
+            <text x="356" y="212" font-size="10" font-weight="600" fill="#4f46e5" font-family="Inter,sans-serif">API › 認証 · 選択中</text>
+          </g>
+
+          <!-- dependent nodes (right) -->
+          <!-- サインアップ API -->
+          <g>
+            <rect x="560" y="70" width="150" height="48" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+            <circle cx="574" cy="88" r="4" fill="#22c55e"/>
+            <text x="584" y="92" font-size="12.5" font-weight="600" fill="#0f172a" font-family="Inter,sans-serif">サインアップ API</text>
+            <text x="574" y="108" font-size="10" fill="#94a3b8" font-family="Inter,sans-serif">API</text>
+          </g>
+          <!-- セッション管理 -->
+          <g>
+            <rect x="560" y="170" width="150" height="48" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+            <circle cx="574" cy="188" r="4" fill="#f59e0b"/>
+            <text x="584" y="192" font-size="12.5" font-weight="600" fill="#0f172a" font-family="Inter,sans-serif">セッション管理</text>
+            <text x="574" y="208" font-size="10" fill="#94a3b8" font-family="Inter,sans-serif">API</text>
+          </g>
+          <!-- 監査ログ要件 -->
+          <g>
+            <rect x="560" y="290" width="150" height="48" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+            <circle cx="574" cy="308" r="4" fill="#22c55e"/>
+            <text x="584" y="312" font-size="12.5" font-weight="600" fill="#0f172a" font-family="Inter,sans-serif">監査ログ要件定義</text>
+            <text x="574" y="328" font-size="10" fill="#94a3b8" font-family="Inter,sans-serif">API</text>
+          </g>
+
+          <!-- column labels -->
+          <text x="80" y="40" font-size="11" font-weight="600" fill="#94a3b8" font-family="Inter,sans-serif">前提（依存先）</text>
+          <text x="365" y="40" font-size="11" font-weight="600" fill="#6366f1" font-family="Inter,sans-serif">選択文書</text>
+          <text x="585" y="40" font-size="11" font-weight="600" fill="#94a3b8" font-family="Inter,sans-serif">影響先（被依存）</text>
+        </svg>
+      </div>
+
+      <!-- legend -->
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 mt-3 text-xs text-slate-500">
+        <span class="flex items-center gap-1.5"><svg width="22" height="8"><line x1="0" y1="4" x2="16" y2="4" stroke="#818cf8" stroke-width="2"/><polygon points="16,1 22,4 16,7" fill="#818cf8"/></svg> AはBに依存</span>
+        <span class="flex items-center gap-1.5"><svg width="22" height="8"><line x1="0" y1="4" x2="16" y2="4" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3 2"/><polygon points="16,2 22,4 16,6" fill="#cbd5e1"/></svg> 深さ2（折りたたみ）</span>
+        <span class="flex items-center gap-1.5"><span class="status-dot" style="background:#22c55e"></span>承認済み</span>
+        <span class="flex items-center gap-1.5"><span class="status-dot" style="background:#f59e0b"></span>レビュー中</span>
+        <span class="flex items-center gap-1.5"><span class="status-dot" style="background:#10b981"></span>ガイド</span>
+      </div>
+    </main>
+
+    <!-- right: detail -->
+    <aside class="hidden xl:block w-72 shrink-0">
+      <div class="border border-slate-200 rounded-xl p-5">
+        <div class="text-[11px] font-semibold tracking-wider text-slate-400 uppercase mb-2">選択中</div>
+        <h2 class="text-lg font-bold text-slate-900 leading-snug">認証・認可アーキテクチャ</h2>
+        <div class="flex items-center gap-2 mt-2 text-xs">
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 text-emerald-700 px-2 py-0.5 font-medium"><span class="status-dot" style="background:#22c55e"></span>承認済み</span>
+          <span class="text-slate-400">API › 認証</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mt-5">
+          <div class="rounded-lg bg-slate-50 p-3 text-center">
+            <div class="text-2xl font-bold text-slate-900">2</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">依存している</div>
+          </div>
+          <div class="rounded-lg bg-brand-50 p-3 text-center">
+            <div class="text-2xl font-bold text-brand-700">3</div>
+            <div class="text-[11px] text-brand-600/80 mt-0.5">依存されている</div>
+          </div>
+        </div>
+
+        <div class="mt-5">
+          <div class="text-[11px] font-semibold tracking-wider text-slate-400 uppercase mb-2">依存している</div>
+          <ul class="text-sm space-y-1.5">
+            <li><a href="#" class="doc-link">システムアーキテクチャ概要</a></li>
+            <li><a href="#" class="doc-link">IdP 連携仕様</a></li>
+          </ul>
+        </div>
+
+        <div class="mt-5">
+          <div class="text-[11px] font-semibold tracking-wider text-slate-400 uppercase mb-2">依存されている</div>
+          <ul class="text-sm space-y-1.5">
+            <li><a href="#" class="doc-link">サインアップ API</a></li>
+            <li><a href="#" class="doc-link">セッション管理</a></li>
+            <li><a href="#" class="doc-link">監査ログ要件定義</a></li>
+          </ul>
+        </div>
+
+        <a href="05-reference-reading.html" class="mt-6 flex items-center justify-center gap-1.5 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg px-4 py-2.5">文書を開く →</a>
+      </div>
+
+      <p class="text-xs text-slate-400 mt-3 leading-relaxed px-1">ノードをクリックで中心を切り替え。深さを上げると間接依存も表示します。</p>
+    </aside>
+
+  </div>
+
+  <footer class="border-t border-slate-100 mt-8">
+    <div class="mx-auto max-w-7xl px-6 py-8 text-sm text-slate-400 flex flex-col sm:flex-row gap-3 justify-between">
+      <p>© 2026 SpecViewer — 社内仕様書ポータル</p>
+      <div class="flex gap-5">
+        <a href="#" class="hover:text-slate-600">ガイドライン</a>
+        <a href="#" class="hover:text-slate-600">リポジトリ</a>
+        <a href="#" class="hover:text-slate-600">お問い合わせ</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

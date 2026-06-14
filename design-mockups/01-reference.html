@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpecViewer — Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+        colors: {
+          brand: { 50:'#eef2ff',100:'#e0e7ff',500:'#6366f1',600:'#4f46e5',700:'#4338ca' }
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-feature-settings: "cv02","cv03","cv04","cv11"; }
+  .status-dot { width:7px; height:7px; border-radius:99px; display:inline-block; }
+</style>
+</head>
+<body class="font-sans antialiased text-slate-700 bg-white">
+
+  <!-- Top nav (確定版: API / 画面 / ガイド ＋ インライン検索・ダークモード・GitHub) -->
+  <header class="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur">
+    <div class="mx-auto max-w-7xl px-6 h-16 flex items-center gap-6">
+      <a href="index.html" class="flex items-center gap-2 font-semibold text-slate-900 shrink-0">
+        <span class="grid place-items-center w-7 h-7 rounded-lg bg-brand-600 text-white text-sm">S</span>
+        SpecViewer
+      </a>
+      <nav class="hidden md:flex items-center gap-1 text-sm">
+        <a href="#" class="px-3 py-1.5 rounded-md font-medium text-slate-700 hover:bg-slate-100">API</a>
+        <a href="#" class="px-3 py-1.5 rounded-md font-medium text-slate-700 hover:bg-slate-100">画面</a>
+        <a href="#" class="px-3 py-1.5 rounded-md font-medium text-slate-700 hover:bg-slate-100">ガイド</a>
+      </nav>
+      <div class="ml-auto flex items-center gap-2.5">
+        <div class="hidden sm:flex items-center gap-2 text-sm text-slate-400 rounded-lg border border-slate-200 px-3 py-1.5 w-56 lg:w-64 bg-white hover:border-slate-300">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>設計書を検索…</span>
+          <kbd class="ml-auto border rounded px-1.5 py-0.5 text-[10px] bg-slate-50">⌘K</kbd>
+        </div>
+        <button class="grid place-items-center w-9 h-9 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-500" title="ダークモード" aria-label="ダークモード切替">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        </button>
+        <a href="#" class="hidden sm:grid place-items-center w-9 h-9 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-500" title="GitHub" aria-label="GitHub">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z"/></svg>
+        </a>
+        <button class="md:hidden grid place-items-center w-9 h-9 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-500" aria-label="メニュー">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="mx-auto max-w-7xl px-6 flex gap-10">
+
+    <!-- Main (ホームはサイドバーなし・フルワイド) -->
+    <main class="py-10 min-w-0 flex-1">
+
+      <!-- Hero -->
+      <section class="mb-14">
+        <div class="inline-flex items-center gap-2 text-xs font-medium text-brand-700 bg-brand-50 rounded-full px-3 py-1 mb-4">
+          <span class="status-dot bg-brand-500"></span> 社内設計書アーカイブ
+        </div>
+        <h1 class="text-4xl font-bold tracking-tight text-slate-900 leading-tight">
+          設計書を、ひとつの画面で。
+        </h1>
+        <p class="mt-4 text-lg text-slate-500 max-w-2xl leading-relaxed">
+          API・画面・ガイド、3つのセクションで設計書を整理。検索とナビゲーションで、目的の仕様に最短で辿り着く社内ポータルです。
+        </p>
+      </section>
+
+      <!-- Sections -->
+      <section class="mb-14">
+        <h2 class="text-lg font-semibold text-slate-900 mb-1">セクション</h2>
+        <p class="text-sm text-slate-400 mb-5">カテゴリから設計書を探す</p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+          <!-- API -->
+          <a href="#" class="group border border-slate-200 rounded-xl p-5 hover:border-brand-300 hover:shadow-sm transition">
+            <div class="flex items-center justify-between mb-3">
+              <span class="grid place-items-center w-10 h-10 rounded-lg bg-brand-50 text-brand-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h2M16 4h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-2M9 9l-3 3 3 3M15 9l3 3-3 3"/></svg>
+              </span>
+              <span class="text-xs text-slate-400 font-medium">9件</span>
+            </div>
+            <h3 class="font-semibold text-slate-900 group-hover:text-brand-700">API</h3>
+            <p class="text-sm text-slate-500 mt-1">エンドポイント・スキーマ・契約</p>
+          </a>
+
+          <!-- 画面 -->
+          <a href="#" class="group border border-slate-200 rounded-xl p-5 hover:border-brand-300 hover:shadow-sm transition">
+            <div class="flex items-center justify-between mb-3">
+              <span class="grid place-items-center w-10 h-10 rounded-lg bg-sky-50 text-sky-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+              </span>
+              <span class="text-xs text-slate-400 font-medium">12件</span>
+            </div>
+            <h3 class="font-semibold text-slate-900 group-hover:text-brand-700">画面</h3>
+            <p class="text-sm text-slate-500 mt-1">画面設計・UI仕様・画面遷移</p>
+          </a>
+
+          <!-- ガイド -->
+          <a href="#" class="group border border-slate-200 rounded-xl p-5 hover:border-brand-300 hover:shadow-sm transition">
+            <div class="flex items-center justify-between mb-3">
+              <span class="grid place-items-center w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14ZM4 19.5A2.5 2.5 0 0 0 6.5 22H20"/></svg>
+              </span>
+              <span class="text-xs text-slate-400 font-medium">7件</span>
+            </div>
+            <h3 class="font-semibold text-slate-900 group-hover:text-brand-700">ガイド</h3>
+            <p class="text-sm text-slate-500 mt-1">執筆ガイドライン・テンプレート・規約</p>
+          </a>
+
+        </div>
+      </section>
+
+      <!-- Recent specs -->
+      <section id="recent">
+        <h2 class="text-lg font-semibold text-slate-900 mb-5">最近の更新</h2>
+
+        <div class="border border-slate-200 rounded-xl divide-y divide-slate-100 overflow-hidden">
+          <!-- API -->
+          <a href="#" class="group flex items-center gap-4 px-5 py-4 hover:bg-slate-50 transition">
+            <span class="grid place-items-center w-9 h-9 rounded-lg bg-brand-50 text-brand-600 text-[11px] font-semibold shrink-0">API</span>
+            <div class="min-w-0 flex-1">
+              <p class="font-medium text-slate-900 group-hover:text-brand-700 truncate">認証・認可アーキテクチャ</p>
+              <p class="text-sm text-slate-400 truncate">OAuth 2.1 / OIDC を用いたトークン発行とスコープ設計</p>
+            </div>
+            <div class="hidden sm:flex items-center gap-2 text-xs text-slate-500">
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 text-emerald-700 px-2 py-0.5 font-medium"><span class="status-dot bg-emerald-500"></span>承認済み</span>
+            </div>
+            <div class="hidden md:block w-24 text-right text-xs text-slate-400">2日前</div>
+          </a>
+
+          <!-- 画面 -->
+          <a href="#" class="group flex items-center gap-4 px-5 py-4 hover:bg-slate-50 transition">
+            <span class="grid place-items-center w-9 h-9 rounded-lg bg-sky-50 text-sky-600 text-xs font-semibold shrink-0">画</span>
+            <div class="min-w-0 flex-1">
+              <p class="font-medium text-slate-900 group-hover:text-brand-700 truncate">注文画面 仕様書</p>
+              <p class="text-sm text-slate-400 truncate">カート・決済フロー・入力バリデーションの要件</p>
+            </div>
+            <div class="hidden sm:flex items-center gap-2 text-xs text-slate-500">
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 text-amber-700 px-2 py-0.5 font-medium"><span class="status-dot bg-amber-500"></span>レビュー中</span>
+            </div>
+            <div class="hidden md:block w-24 text-right text-xs text-slate-400">3日前</div>
+          </a>
+
+          <!-- ガイド -->
+          <a href="#" class="group flex items-center gap-4 px-5 py-4 hover:bg-slate-50 transition">
+            <span class="grid place-items-center w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 text-xs font-semibold shrink-0">G</span>
+            <div class="min-w-0 flex-1">
+              <p class="font-medium text-slate-900 group-hover:text-brand-700 truncate">執筆ガイドライン</p>
+              <p class="text-sm text-slate-400 truncate">設計書の構成・用語・レビュー基準</p>
+            </div>
+            <div class="hidden sm:flex items-center gap-2 text-xs text-slate-500">
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 text-emerald-700 px-2 py-0.5 font-medium"><span class="status-dot bg-emerald-500"></span>承認済み</span>
+            </div>
+            <div class="hidden md:block w-24 text-right text-xs text-slate-400">5日前</div>
+          </a>
+
+          <!-- API -->
+          <a href="#" class="group flex items-center gap-4 px-5 py-4 hover:bg-slate-50 transition">
+            <span class="grid place-items-center w-9 h-9 rounded-lg bg-brand-50 text-brand-600 text-[11px] font-semibold shrink-0">API</span>
+            <div class="min-w-0 flex-1">
+              <p class="font-medium text-slate-900 group-hover:text-brand-700 truncate">決済 API 仕様</p>
+              <p class="text-sm text-slate-400 truncate">決済代行連携・冪等性・エラーハンドリング</p>
+            </div>
+            <div class="hidden sm:flex items-center gap-2 text-xs text-slate-500">
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 text-amber-700 px-2 py-0.5 font-medium"><span class="status-dot bg-amber-500"></span>レビュー中</span>
+            </div>
+            <div class="hidden md:block w-24 text-right text-xs text-slate-400">1週間前</div>
+          </a>
+
+          <!-- 画面 -->
+          <a href="#" class="group flex items-center gap-4 px-5 py-4 hover:bg-slate-50 transition">
+            <span class="grid place-items-center w-9 h-9 rounded-lg bg-sky-50 text-sky-600 text-xs font-semibold shrink-0">画</span>
+            <div class="min-w-0 flex-1">
+              <p class="font-medium text-slate-900 group-hover:text-brand-700 truncate">マイページ 画面設計</p>
+              <p class="text-sm text-slate-400 truncate">アカウント設定・通知設定のUI仕様</p>
+            </div>
+            <div class="hidden sm:flex items-center gap-2 text-xs text-slate-500">
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 text-slate-500 px-2 py-0.5 font-medium"><span class="status-dot bg-slate-400"></span>ドラフト</span>
+            </div>
+            <div class="hidden md:block w-24 text-right text-xs text-slate-400">2週間前</div>
+          </a>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="border-t border-slate-100 mt-16">
+    <div class="mx-auto max-w-7xl px-6 py-8 text-sm text-slate-400 flex flex-col sm:flex-row gap-3 justify-between">
+      <p>© 2026 SpecViewer — 社内仕様書ポータル</p>
+      <div class="flex gap-5">
+        <a href="#" class="hover:text-slate-600">ガイドライン</a>
+        <a href="#" class="hover:text-slate-600">リポジトリ</a>
+        <a href="#" class="hover:text-slate-600">お問い合わせ</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

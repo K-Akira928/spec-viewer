@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>サインアップ API — SpecViewer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: { extend: {
+      fontFamily: { sans:['Inter','system-ui','sans-serif'], mono:['JetBrains Mono','ui-monospace','monospace'] },
+      colors: { brand:{50:'#eef2ff',100:'#e0e7ff',500:'#6366f1',600:'#4f46e5',700:'#4338ca'} }
+    }}
+  }
+</script>
+<style>
+  body{font-feature-settings:"cv02","cv03","cv04","cv11";}
+  .prose-doc h2{font-size:1.75rem;font-weight:700;color:#0f172a;letter-spacing:-.01em;margin:2.4em 0 .7em;padding-top:.2em;border-top:1px solid #f1f5f9;}
+  .prose-doc h3{font-size:1.2rem;font-weight:600;color:#0f172a;margin:1.8em 0 .5em;}
+  .prose-doc p{margin:.8em 0;color:#334155;line-height:1.8;}
+  .prose-doc ul{margin:.8em 0;padding-left:1.3em;}
+  .prose-doc li{margin:.4em 0;color:#334155;line-height:1.7;}
+  .prose-doc code:not(pre code){font-family:'JetBrains Mono',monospace;font-size:.85em;background:#f1f5f9;color:#4f46e5;padding:.12em .4em;border-radius:5px;}
+  .prose-doc a{color:#4f46e5;text-decoration:none;border-bottom:1px solid #c7d2fe;}
+  .prose-doc a:hover{border-color:#4f46e5;}
+  pre.code{background:#0f172a;color:#e2e8f0;border-radius:12px;padding:18px 20px;overflow-x:auto;font-size:13.5px;line-height:1.7;margin:1.2em 0;}
+  pre.code .c{color:#64748b;} pre.code .k{color:#a78bfa;} pre.code .s{color:#86efac;} pre.code .f{color:#7dd3fc;}
+  .callout{border-radius:12px;padding:14px 16px;margin:1.4em 0;display:flex;gap:12px;border:1px solid;font-size:14.5px;line-height:1.65;}
+  .callout .ic{flex-shrink:0;width:18px;height:18px;margin-top:1px;}
+  .callout.tip{background:#f0fdf4;border-color:#bbf7d0;} .callout.tip,.callout.tip strong{color:#14532d;}
+  .callout.warn{background:#fffbeb;border-color:#fde68a;} .callout.warn,.callout.warn strong{color:#78350f;}
+  .callout.info{background:#eef2ff;border-color:#c7d2fe;} .callout.info,.callout.info strong{color:#3730a3;}
+  .anchor{scroll-margin-top:90px;}
+  .toc-link{display:block;padding:5px 10px;border-radius:6px;font-size:13px;color:#64748b;line-height:1.4;border-left:2px solid transparent;}
+  .toc-link:hover{color:#0f172a;}
+  .toc-link.active{color:#4f46e5;background:#eef2ff;border-left-color:#4f46e5;font-weight:500;}
+  .toc-link.sub{padding-left:22px;font-size:12.5px;}
+  table.spec{width:100%;border-collapse:collapse;font-size:14px;margin:1.2em 0;}
+  table.spec th,table.spec td{border-bottom:1px solid #e2e8f0;padding:10px 14px;text-align:left;}
+  table.spec th{background:#f8fafc;font-weight:600;color:#475569;font-size:12px;text-transform:uppercase;letter-spacing:.04em;}
+  table.spec td code{font-family:'JetBrains Mono',monospace;font-size:.85em;color:#4f46e5;}
+  /* サイドバー全体折りたたみ */
+  #doc-shell.sidebar-collapsed #doc-sidebar{display:none!important;}
+  @media(min-width:1024px){
+    #doc-shell.sidebar-collapsed #sidebar-restore{display:grid!important;}
+  }
+  /* 副作用カード */
+  .se-card ul{list-style:none;padding-left:0;margin:0;}
+  .se-card li{margin:.3em 0;color:#334155;line-height:1.65;}
+  .se-card li:last-child{margin-bottom:0;}
+  .se-card dl{margin:0;}
+  .se-card dt{color:#94a3b8;font-weight:500;}
+  .se-card dd{margin:0;color:#334155;}
+  /* 副作用エントリ（固定スキーマ） */
+  .se-fields{display:grid;grid-template-columns:5rem 1fr;gap:.45rem 1rem;font-size:.875rem;margin:0;}
+  .se-fields dt{color:#94a3b8;font-weight:500;}
+  .se-fields dd{margin:0;color:#334155;line-height:1.6;}
+  .se-enum{display:inline-block;font-size:.7rem;font-weight:600;padding:.12rem .5rem;border-radius:.375rem;border:1px solid;white-space:nowrap;}
+  .se-enum.tx{color:#475569;border-color:#e2e8f0;background:#f8fafc;}
+  .se-enum.q{color:#0369a1;border-color:#bae6fd;background:#f0f9ff;}
+  .se-enum.ff{color:#6d28d9;border-color:#ddd6fe;background:#f5f3ff;}
+  /* Gherkin シナリオ */
+  .gh-feature{margin-bottom:1rem;}
+  .gh-feature-tag{display:inline-block;font-size:.68rem;font-weight:700;color:#4f46e5;background:#eef2ff;padding:.15rem .5rem;border-radius:.375rem;margin-bottom:.4rem;}
+  .gh-feature-title{font-size:1.05rem;font-weight:700;color:#0f172a;}
+  .gh-feature-desc{color:#475569;font-size:.9rem;margin:.25rem 0 0;}
+  .gh-bg{background:#f8fafc;border:1px solid #e2e8f0;border-left:3px solid #94a3b8;border-radius:.5rem;padding:.7rem 1rem;margin-bottom:1rem;}
+  .gh-bg-title{font-size:.68rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem;}
+  .gh-scenario{border:1px solid #e2e8f0;border-radius:.625rem;padding:.8rem 1.05rem;margin-bottom:.6rem;background:#fff;}
+  .gh-scenario-title{font-weight:600;color:#0f172a;margin-bottom:.5rem;font-size:.95rem;}
+  .gh-step{display:flex;gap:.6rem;align-items:flex-start;font-size:.875rem;line-height:1.6;padding:.12rem 0;}
+  .gh-kw{display:inline-block;min-width:2.8rem;text-align:center;font-size:.68rem;font-weight:700;padding:.2rem .35rem;border-radius:.3rem;flex-shrink:0;margin-top:.12rem;}
+  .gh-kw.given{background:#bfdbfe;color:#1e40af;}
+  .gh-kw.when{background:#c7d2fe;color:#3730a3;}
+  .gh-kw.then{background:#bbf7d0;color:#065f46;}
+  .gh-kw.and{background:#f1f5f9;color:#94a3b8;}
+  .gh-kw.but{background:#f1f5f9;color:#94a3b8;}
+  .gh-step-text{flex:1;color:#334155;min-width:0;}
+  .gh-doc{background:#0f172a;color:#e2e8f0;border-radius:.4rem;padding:.5rem .75rem;font-size:.78rem;margin:.4rem 0 0;font-family:'JetBrains Mono',ui-monospace,monospace;white-space:pre-wrap;word-break:break-word;}
+</style>
+</head>
+<body class="font-sans antialiased text-slate-700 bg-white">
+
+  <!-- Top nav (確定版: API / 画面 / ガイド ＋ インライン検索・ダークモード・GitHub) -->
+  <header class="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur">
+    <div class="mx-auto max-w-7xl px-6 h-16 flex items-center gap-6">
+      <a href="index.html" class="flex items-center gap-2 font-semibold text-slate-900 shrink-0">
+        <span class="grid place-items-center w-7 h-7 rounded-lg bg-brand-600 text-white text-sm">S</span>
+        SpecViewer
+      </a>
+      <nav class="hidden md:flex items-center gap-1 text-sm">
+        <a href="#" class="px-3 py-1.5 rounded-md font-medium text-slate-700 hover:bg-slate-100">API</a>
+        <a href="#" class="px-3 py-1.5 rounded-md font-medium text-slate-700 hover:bg-slate-100">画面</a>
+        <a href="#" class="px-3 py-1.5 rounded-md font-medium text-slate-700 hover:bg-slate-100">ガイド</a>
+      </nav>
+      <div class="ml-auto flex items-center gap-2.5">
+        <div class="hidden sm:flex items-center gap-2 text-sm text-slate-400 rounded-lg border border-slate-200 px-3 py-1.5 w-56 lg:w-64 bg-white hover:border-slate-300">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>設計書を検索…</span>
+          <kbd class="ml-auto border rounded px-1.5 py-0.5 text-[10px] bg-slate-50">⌘K</kbd>
+        </div>
+        <button class="grid place-items-center w-9 h-9 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-500" title="ダークモード" aria-label="ダークモード切替">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        </button>
+        <a href="#" class="hidden sm:grid place-items-center w-9 h-9 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-500" title="GitHub" aria-label="GitHub">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z"/></svg>
+        </a>
+        <button class="md:hidden grid place-items-center w-9 h-9 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-500" aria-label="メニュー">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <div class="border-b border-slate-100">
+    <div class="mx-auto max-w-7xl px-6 py-3 text-xs text-slate-400 flex items-center gap-1.5">
+      <a href="01-reference.html" class="hover:text-slate-600">API</a> <span>/</span>
+      <a href="#" class="hover:text-slate-600">認証</a> <span>/</span>
+      <span class="text-slate-600">サインアップ API</span>
+    </div>
+  </div>
+
+  <div id="doc-shell" class="mx-auto max-w-7xl px-6 flex gap-10">
+
+    <!-- サイドバー折りたたみ時の復元ボタン（固定・desktopのみ表示） -->
+    <button id="sidebar-restore" onclick="toggleSidebar()" class="fixed left-4 top-1/2 -translate-y-1/2 z-20 hidden place-items-center w-8 h-8 rounded-lg border border-slate-200 bg-white shadow-sm text-slate-500 hover:bg-slate-50 hover:text-slate-700" title="サイドバーを表示 (Ctrl+B)" aria-label="サイドバーを表示">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>
+    </button>
+
+    <!-- Left: section tree (現セクション API のツリー) -->
+    <aside id="doc-sidebar" class="hidden lg:block w-56 shrink-0 py-8 border-r border-slate-100">
+      <div class="flex items-center justify-between px-3 mb-3">
+        <p class="text-[11px] font-semibold tracking-wider text-slate-400 uppercase">API</p>
+        <button onclick="toggleSidebar()" class="grid place-items-center w-6 h-6 -mr-1 rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-600" title="サイドバーを隠す (Ctrl+B)" aria-label="サイドバーを隠す">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg>
+        </button>
+      </div>
+      <nav class="text-sm flex flex-col">
+        <!-- ▾ 認証 (展開) -->
+        <div class="mb-1">
+          <button class="w-full flex items-center gap-1.5 px-3 py-1.5 rounded-md text-slate-700 font-medium hover:bg-slate-50">
+            <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 20 20"><path d="M5.5 7.5 10 12l4.5-4.5"/></svg>
+            認証
+            <span class="ml-auto text-[11px] text-slate-400">4</span>
+          </button>
+          <div class="ml-2 border-l border-slate-100 pl-2 mt-0.5">
+            <a class="block px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-50">認証・認可アーキテクチャ</a>
+            <a class="block px-3 py-1.5 rounded-md bg-brand-50 text-brand-700 font-medium">サインアップ API</a>
+            <a class="block px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-50">トークン仕様</a>
+            <a class="block px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-50">セッション管理</a>
+          </div>
+        </div>
+        <!-- ▾ 注文 (展開) -->
+        <div class="mb-1">
+          <button class="w-full flex items-center gap-1.5 px-3 py-1.5 rounded-md text-slate-700 font-medium hover:bg-slate-50">
+            <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 20 20"><path d="M5.5 7.5 10 12l4.5-4.5"/></svg>
+            注文
+            <span class="ml-auto text-[11px] text-slate-400">2</span>
+          </button>
+          <div class="ml-2 border-l border-slate-100 pl-2 mt-0.5">
+            <a class="block px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-50">注文 API 仕様</a>
+            <a class="block px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-50">注文状態遷移</a>
+          </div>
+        </div>
+        <!-- ▸ 決済 (折たたみ) -->
+        <button class="w-full flex items-center gap-1.5 px-3 py-1.5 rounded-md text-slate-700 font-medium hover:bg-slate-50">
+          <svg class="w-3 h-3 text-slate-400 -rotate-90" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 20 20"><path d="M5.5 7.5 10 12l4.5-4.5"/></svg>
+          決済
+          <span class="ml-auto text-[11px] text-slate-400">2</span>
+        </button>
+      </nav>
+
+      <!-- 他セクション -->
+      <div class="mt-8 pt-4 border-t border-slate-100">
+        <p class="px-3 text-[11px] font-semibold tracking-wider text-slate-400 uppercase mb-2">他のセクション</p>
+        <nav class="text-sm flex flex-col">
+          <a class="flex items-center justify-between px-3 py-1.5 rounded-md hover:bg-slate-50 text-slate-600">画面 <span class="text-slate-400">↗</span></a>
+          <a class="flex items-center justify-between px-3 py-1.5 rounded-md hover:bg-slate-50 text-slate-600">ガイド <span class="text-slate-400">↗</span></a>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Center: article -->
+    <main class="py-10 min-w-0 flex-1 max-w-3xl">
+
+      <!-- doc header -->
+      <div class="flex flex-wrap items-center gap-2 mb-4">
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 text-emerald-700 px-2.5 py-1 text-xs font-medium">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>承認済み
+        </span>
+        <a href="08-deps.html" class="ml-auto inline-flex items-center gap-1.5 text-sm font-medium text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 rounded-lg px-3 py-1.5" title="依存関係マップで開く">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 11l8-3M8 13l8 3"/></svg>
+          依存関係マップ
+        </a>
+      </div>
+      <h1 class="text-4xl font-bold tracking-tight text-slate-900 leading-tight">サインアップ API</h1>
+      <div class="mt-3 flex flex-wrap items-center gap-3">
+        <span class="inline-flex items-center rounded-md bg-emerald-600 text-white text-sm font-bold px-2.5 py-1">POST</span>
+        <code class="text-base font-mono text-slate-800 bg-slate-100 rounded px-2 py-1">/signup</code>
+        <span class="text-sm text-slate-400">API › 認証</span>
+      </div>
+      <p class="mt-3 text-lg text-slate-500 leading-relaxed">
+        新しいユーザーアカウントを作成し、認証用トークンを発行する。
+      </p>
+
+      <!-- body -->
+      <article class="prose-doc mt-10">
+
+        <h2 class="anchor" id="request">リクエスト</h2>
+
+        <h3>ヘッダー</h3>
+        <table class="spec">
+          <thead><tr><th>名前</th><th>必須</th><th>説明</th></tr></thead>
+          <tbody>
+            <tr><td><code>Content-Type</code></td><td>必須</td><td><code>application/json</code></td></tr>
+          </tbody>
+        </table>
+
+        <h3>ボディ</h3>
+        <table class="spec">
+          <thead><tr><th>フィールド</th><th>型</th><th>必須</th><th>制約</th><th>説明</th></tr></thead>
+          <tbody>
+            <tr><td><code>email</code></td><td>string</td><td>必須</td><td>RFC 5322 準拠</td><td>登録用メールアドレス。一意であること。</td></tr>
+            <tr><td><code>password</code></td><td>string</td><td>必須</td><td>8〜64 文字</td><td>ログインパスワード。</td></tr>
+            <tr><td><code>username</code></td><td>string</td><td>任意</td><td>1〜32 文字</td><td>表示名。未指定時は email のローカル部。</td></tr>
+          </tbody>
+        </table>
+
+        <h3>サンプル</h3>
+<pre class="code"><span class="c">{</span>
+  <span class="f">"email"</span>: <span class="s">"alice@example.com"</span>,
+  <span class="f">"password"</span>: <span class="s">"p@ssw0rd123"</span>,
+  <span class="f">"username"</span>: <span class="s">"Alice"</span>
+<span class="c">}</span></pre>
+
+        <h2 class="anchor" id="response">レスポンス</h2>
+
+        <h3>成功時（201 Created）</h3>
+        <table class="spec">
+          <thead><tr><th>フィールド</th><th>型</th><th>説明</th></tr></thead>
+          <tbody>
+            <tr><td><code>userId</code></td><td>string</td><td>作成されたユーザーの一意 ID。</td></tr>
+            <tr><td><code>email</code></td><td>string</td><td>登録されたメールアドレス。</td></tr>
+            <tr><td><code>username</code></td><td>string</td><td>表示名。</td></tr>
+            <tr><td><code>accessToken</code></td><td>string</td><td>認証用アクセストークン。有効期限 1 時間。</td></tr>
+            <tr><td><code>refreshToken</code></td><td>string</td><td>トークン再発行用。有効期限 14 日。</td></tr>
+          </tbody>
+        </table>
+<pre class="code"><span class="c">{</span>
+  <span class="f">"userId"</span>: <span class="s">"usr_0a1b2c3d4e5f"</span>,
+  <span class="f">"email"</span>: <span class="s">"alice@example.com"</span>,
+  <span class="f">"username"</span>: <span class="s">"Alice"</span>,
+  <span class="f">"accessToken"</span>: <span class="s">"eyJhbGciOi..."</span>,
+  <span class="f">"refreshToken"</span>: <span class="s">"rt_9z8y7x6w5v4u"</span>
+<span class="c">}</span></pre>
+
+        <h3>エラー時</h3>
+        <table class="spec">
+          <thead><tr><th>ステータス</th><th>コード</th><th>説明</th></tr></thead>
+          <tbody>
+            <tr><td>400</td><td><code>INVALID_REQUEST</code></td><td>リクエストボディの形式不正、またはバリデーションエラー。</td></tr>
+            <tr><td>409</td><td><code>EMAIL_ALREADY_USED</code></td><td>指定された email は既に登録済み。</td></tr>
+            <tr><td>429</td><td><code>TOO_MANY_REQUESTS</code></td><td>同一 IP からのリクエストが制限値を超過。</td></tr>
+          </tbody>
+        </table>
+<pre class="code"><span class="c">{</span>
+  <span class="f">"code"</span>: <span class="s">"EMAIL_ALREADY_USED"</span>,
+  <span class="f">"message"</span>: <span class="s">"このメールアドレスは既に使用されています。"</span>
+<span class="c">}</span></pre>
+
+        <h2 class="anchor" id="side-effects">副作用</h2>
+        <p>副作用は <strong>種別（内部 / 外部）ごとに固定の項目</strong>を埋める形式で記述する。自由文章ではなく、決まった枠に値を入れる。</p>
+
+        <h3 class="anchor" id="side-effects-internal">内部状態（DB トランザクション内）</h3>
+        <div class="grid grid-cols-1 gap-4 mb-4">
+
+          <div class="se-entry se-card border border-slate-200 rounded-xl p-4">
+            <div class="font-semibold text-slate-900 mb-3">users テーブル</div>
+            <dl class="se-fields">
+              <dt>内容</dt><dd>レコード作成（INSERT）。パスワードは bcrypt（cost=12）でハッシュ化</dd>
+              <dt>経路</dt><dd><span class="se-enum tx">DBトランザクション内</span></dd>
+              <dt>失敗時</dt><dd>主操作と同一トランザクションのため、失敗時はロールバック</dd>
+            </dl>
+          </div>
+
+          <div class="se-entry se-card border border-slate-200 rounded-xl p-4">
+            <div class="font-semibold text-slate-900 mb-3">sessions テーブル</div>
+            <dl class="se-fields">
+              <dt>内容</dt><dd>認証トークンペア（access / refresh）を保持</dd>
+              <dt>経路</dt><dd><span class="se-enum tx">DBトランザクション内</span></dd>
+              <dt>失敗時</dt><dd>主操作と同一トランザクションのため、失敗時はロールバック</dd>
+            </dl>
+          </div>
+
+        </div>
+
+        <h3 class="anchor" id="side-effects-external">外部への副作用</h3>
+        <p>以降の副作用はすべて <strong>DB トランザクションとは別経路</strong> で行い、失敗してもアカウント作成自体は取り消さない（最終的整合性）。共通の失敗時の扱いは末尾にまとめる。</p>
+        <div class="grid grid-cols-1 gap-4 mb-4">
+
+          <div class="se-entry se-card border border-slate-200 rounded-xl p-4">
+            <div class="font-semibold text-slate-900 mb-3">メール送信（SendGrid）</div>
+            <dl class="se-fields">
+              <dt>内容</dt><dd>ウェルカムメール・認証（verify）リンク</dd>
+              <dt>経路</dt><dd><span class="se-enum q">非同期・ジョブキュー</span>（commit 後）</dd>
+              <dt>失敗時</dt><dd>最大 3 回リトライ→デッドレターキュー→運用通知。未認証のまま 7 日で定期バッチが無効化</dd>
+            </dl>
+          </div>
+
+          <div class="se-entry se-card border border-slate-200 rounded-xl p-4">
+            <div class="font-semibold text-slate-900 mb-3">監査ログ（CloudWatch Logs）</div>
+            <dl class="se-fields">
+              <dt>内容</dt><dd>アカウント作成イベント・実行元 IP・User-Agent（PII 最小限、email はマスク）</dd>
+              <dt>経路</dt><dd><span class="se-enum ff">非同期・fire-and-forget</span></dd>
+              <dt>失敗時</dt><dd>ローカルファイルへフォールバック書き込み、後続バッチで再送</dd>
+            </dl>
+          </div>
+
+        </div>
+
+        <h3 class="anchor" id="side-effects-common">共通の失敗時の扱い</h3>
+        <div class="se-card border border-amber-200 bg-amber-50/40 rounded-xl p-4">
+          <div class="font-semibold text-slate-900 mb-3">共通ポリシー（すべての副作用）</div>
+          <dl class="se-fields">
+            <dt>整合性</dt><dd>外部副作用の失敗で主操作（アカウント作成）は取り消さない</dd>
+            <dt>主操作失敗時</dt><dd>DB トランザクション失敗時は即座に中断し 500 系エラー。外部副作用は一切実行しない</dd>
+            <dt>リトライ</dt><dd>外部副作用は非同期でリトライ。復旧不能時は運用へ通知</dd>
+            <dt>冪等性</dt><dd><code>userId</code> を冪等キーとし、リトライ・重複配送でも結果が重複しない</dd>
+          </dl>
+        </div>
+
+        <h2 class="anchor" id="scenarios">シナリオ（BDD / Gherkin）</h2>
+        <p>振る舞いを <code>Given-When-Then</code> で記述。Cucumber 等の実行対象ではなく、レビュー用の仕様記述。</p>
+
+        <div class="gh-feature">
+          <span class="gh-feature-tag">Feature</span>
+          <div class="gh-feature-title">ユーザーサインアップ (/signup)</div>
+          <div class="gh-feature-desc">新しいユーザーがアカウントを作成し、認証トークンを取得できる。外部副作用の成否はアカウント作成自体の成否とは独立して扱われる。</div>
+        </div>
+
+        <div class="gh-bg">
+          <div class="gh-bg-title">Background — 共通前提</div>
+          <div class="gh-step"><span class="gh-kw given">Given</span><div class="gh-step-text">エンドポイント "/signup" が利用可能である</div></div>
+          <div class="gh-step"><span class="gh-kw and">And</span><div class="gh-step-text">Content-Type ヘッダーは "application/json" である</div></div>
+        </div>
+
+        <div class="gh-scenario">
+          <div class="gh-scenario-title">有効なリクエストでサインアップに成功する</div>
+          <div class="gh-step"><span class="gh-kw given">Given</span><div class="gh-step-text">email "alice@example.com" はまだ登録されていない</div></div>
+          <div class="gh-step"><span class="gh-kw when">When</span><div class="gh-step-text">以下のボディで POST "/signup" をリクエストする<pre class="gh-doc">{
+  "email": "alice@example.com",
+  "password": "p@ssw0rd123",
+  "username": "Alice"
+}</pre></div></div>
+          <div class="gh-step"><span class="gh-kw then">Then</span><div class="gh-step-text">ステータスコードは 201 である</div></div>
+          <div class="gh-step"><span class="gh-kw and">And</span><div class="gh-step-text">レスポンスに userId / accessToken / refreshToken が含まれる</div></div>
+          <div class="gh-step"><span class="gh-kw and">And</span><div class="gh-step-text">users テーブルにパスワードがハッシュ化されたレコードが作成される</div></div>
+          <div class="gh-step"><span class="gh-kw and">And</span><div class="gh-step-text">認証用メールが送信キューに積まれる</div></div>
+        </div>
+
+        <div class="gh-scenario">
+          <div class="gh-scenario-title">既に登録済みの email は拒否される</div>
+          <div class="gh-step"><span class="gh-kw given">Given</span><div class="gh-step-text">email "bob@example.com" は既に登録済みである</div></div>
+          <div class="gh-step"><span class="gh-kw when">When</span><div class="gh-step-text">以下のボディで POST "/signup" をリクエストする<pre class="gh-doc">{ "email": "bob@example.com", "password": "p@ssw0rd123" }</pre></div></div>
+          <div class="gh-step"><span class="gh-kw then">Then</span><div class="gh-step-text">ステータスコードは 409 である</div></div>
+          <div class="gh-step"><span class="gh-kw and">And</span><div class="gh-step-text">エラーコードは "EMAIL_ALREADY_USED" である</div></div>
+          <div class="gh-step"><span class="gh-kw and">And</span><div class="gh-step-text">アカウントは作成されない</div></div>
+        </div>
+
+        <div class="gh-scenario">
+          <div class="gh-scenario-title">不正なリクエストボディは拒否される</div>
+          <div class="gh-step"><span class="gh-kw when">When</span><div class="gh-step-text">以下のボディで POST "/signup" をリクエストする<pre class="gh-doc">{ "email": "not-an-email", "password": "short" }</pre></div></div>
+          <div class="gh-step"><span class="gh-kw then">Then</span><div class="gh-step-text">ステータスコードは 400 である</div></div>
+          <div class="gh-step"><span class="gh-kw and">And</span><div class="gh-step-text">エラーコードは "INVALID_REQUEST" である</div></div>
+        </div>
+
+        <div class="gh-scenario">
+          <div class="gh-scenario-title">同一 IP からの過剰リクエストは制限される</div>
+          <div class="gh-step"><span class="gh-kw given">Given</span><div class="gh-step-text">同一 IP から直近のリクエスト数が制限値に達している</div></div>
+          <div class="gh-step"><span class="gh-kw when">When</span><div class="gh-step-text">POST "/signup" をリクエストする</div></div>
+          <div class="gh-step"><span class="gh-kw then">Then</span><div class="gh-step-text">ステータスコードは 429 である</div></div>
+          <div class="gh-step"><span class="gh-kw and">And</span><div class="gh-step-text">エラーコードは "TOO_MANY_REQUESTS" である</div></div>
+        </div>
+
+        <div class="gh-scenario">
+          <div class="gh-scenario-title">メール送信に失敗してもアカウントは有効なまま残る（最終的整合性）</div>
+          <div class="gh-step"><span class="gh-kw given">Given</span><div class="gh-step-text">有効なリクエストでアカウントが作成された</div></div>
+          <div class="gh-step"><span class="gh-kw when">When</span><div class="gh-step-text">認証メールの送信が 3 回連続で失敗する</div></div>
+          <div class="gh-step"><span class="gh-kw then">Then</span><div class="gh-step-text">メッセージはデッドレターキューに移動し運用へ通知される</div></div>
+          <div class="gh-step"><span class="gh-kw but">But</span><div class="gh-step-text">アカウントは無効化されず、後続のリトライで再送が試みられる</div></div>
+        </div>
+
+        <div class="gh-scenario">
+          <div class="gh-scenario-title">メールの重複配送でもユーザーへ重複送信しない（冪等性）</div>
+          <div class="gh-step"><span class="gh-kw given">Given</span><div class="gh-step-text">ジョブキューから同一の送信ジョブが複数回取り出される</div></div>
+          <div class="gh-step"><span class="gh-kw when">When</span><div class="gh-step-text">メール送信ワーカーがそれぞれを処理する</div></div>
+          <div class="gh-step"><span class="gh-kw then">Then</span><div class="gh-step-text">ユーザーへ届くメールは 1 通である（userId を冪等キーに重複を弾く）</div></div>
+        </div>
+
+        <div class="gh-scenario">
+          <div class="gh-scenario-title">監査ログの送信に失敗してもローカルへフォールバック記録する</div>
+          <div class="gh-step"><span class="gh-kw given">Given</span><div class="gh-step-text">アカウント作成時に CloudWatch Logs へのログ送信が失敗する</div></div>
+          <div class="gh-step"><span class="gh-kw then">Then</span><div class="gh-step-text">監査イベントはローカルファイルにも書き込まれる</div></div>
+          <div class="gh-step"><span class="gh-kw and">And</span><div class="gh-step-text">後続バッチで CloudWatch Logs へ再送される</div></div>
+        </div>
+
+        <h2 class="anchor" id="related">関連文書</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+          <div class="border border-slate-200 rounded-xl p-4">
+            <div class="text-[11px] font-semibold tracking-wider text-slate-400 uppercase mb-3">依存</div>
+            <div class="flex flex-col gap-2 text-sm">
+              <a href="#" class="text-brand-600 hover:underline">認証・認可アーキテクチャ</a>
+            </div>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <div class="text-[11px] font-semibold tracking-wider text-slate-400 uppercase mb-3">関連</div>
+            <div class="flex flex-col gap-2 text-sm">
+              <a href="#" class="text-brand-600 hover:underline">API設計フォーマット</a>
+              <a href="#" class="text-brand-600 hover:underline">セッション管理</a>
+              <a href="#" class="text-brand-600 hover:underline">監査ログ要件定義</a>
+            </div>
+          </div>
+        </div>
+
+        <a href="08-deps.html" class="inline-flex items-center gap-1.5 mt-4 text-sm font-medium text-brand-600 hover:text-brand-700">依存関係マップで全体を見る →</a>
+
+      </article>
+
+      <!-- prev / next -->
+      <nav class="mt-14 grid grid-cols-2 gap-4 border-t border-slate-100 pt-6">
+        <a href="#" class="rounded-xl border border-slate-200 p-4 hover:border-slate-300">
+          <div class="text-xs text-slate-400">← 前</div>
+          <div class="font-medium text-slate-700 mt-1">トークン仕様</div>
+        </a>
+        <a href="#" class="rounded-xl border border-slate-200 p-4 hover:border-slate-300 text-right">
+          <div class="text-xs text-slate-400">次 →</div>
+          <div class="font-medium text-slate-700 mt-1">セッション管理</div>
+        </a>
+      </nav>
+
+    </main>
+
+    <!-- Right: on-this-page TOC -->
+    <aside class="hidden xl:block w-56 shrink-0">
+      <div class="sticky top-24 py-8">
+        <p class="px-3 text-[11px] font-semibold tracking-wider text-slate-400 uppercase mb-3">このページの内容</p>
+        <nav>
+          <a href="#request" class="toc-link active">リクエスト</a>
+          <a href="#response" class="toc-link">レスポンス</a>
+          <a href="#side-effects" class="toc-link">副作用</a>
+          <a href="#side-effects-internal" class="toc-link sub">内部状態</a>
+          <a href="#side-effects-external" class="toc-link sub">外部への副作用</a>
+          <a href="#side-effects-common" class="toc-link sub">共通の失敗時の扱い</a>
+          <a href="#scenarios" class="toc-link">シナリオ（BDD / Gherkin）</a>
+          <a href="#related" class="toc-link">関連文書</a>
+        </nav>
+      </div>
+    </aside>
+
+  </div>
+
+  <footer class="border-t border-slate-100 mt-16">
+    <div class="mx-auto max-w-7xl px-6 py-8 text-sm text-slate-400 flex flex-col sm:flex-row gap-3 justify-between">
+      <p>© 2026 SpecViewer — 社内仕様書ポータル</p>
+      <div class="flex gap-5">
+        <a href="#" class="hover:text-slate-600">ガイドライン</a>
+        <a href="#" class="hover:text-slate-600">ソースを表示</a>
+        <a href="#" class="hover:text-slate-600">PDF書き出し</a>
+      </div>
+    </div>
+  </footer>
+
+<script>
+  function toggleSidebar(){
+    var s=document.getElementById('doc-shell');
+    s.classList.toggle('sidebar-collapsed');
+    try{localStorage.setItem('sv-sidebar',s.classList.contains('sidebar-collapsed')?'1':'0');}catch(e){}
+  }
+  document.addEventListener('keydown',function(e){
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='b'){e.preventDefault();toggleSidebar();}
+  });
+  try{if(localStorage.getItem('sv-sidebar')==='1'){document.getElementById('doc-shell').classList.add('sidebar-collapsed');}}catch(e){}
+</script>
+</body>
+</html>
