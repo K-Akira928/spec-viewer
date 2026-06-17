@@ -2,8 +2,11 @@
 // docs/*.md を import.meta.glob で走査し、各 frontmatter から動的に生成（実データ駆動）。
 // 文書を増やすには docs/{api,ui,guide}/.../*.md を追加するだけ（このファイルは触らない）。
 // dependsOn/related は docs/ からの相対 path（.md 無し）で指定する
+// セクション設定（SectionKey / SectionMeta / sections）は ./sections に分離。下で再エクスポートし既存の from './docs-data' を維持
 
-export type SectionKey = 'api' | 'ui' | 'guide' | 'db'
+import { sections, type SectionKey, type SectionMeta } from './sections'
+export { sections, type SectionKey, type SectionMeta }
+
 export type DocStatus = '承認済み' | 'レビュー中' | 'ドラフト'
 
 export interface SpecDoc {
@@ -19,66 +22,6 @@ export interface SpecDoc {
   dependsOn?: string[] // 依存先文書の path（A が B に依存）
   related?: string[] // 関連文書の path
 }
-
-export interface SectionMeta {
-  key: SectionKey
-  label: string
-  description: string
-  shortDescription: string
-  navHref: string
-  iconClass: string
-  badgeClass: string
-  badgeText: string
-  accentText: string
-}
-
-// セクションメタ（DESIGN.md §3）。クラス文字列は完全な形で持つ（Tailwind v4 スキャン対象）
-export const sections: SectionMeta[] = [
-  {
-    key: 'api',
-    label: 'API',
-    description: 'エンドポイント・スキーマ・契約に関する設計書',
-    shortDescription: 'エンドポイント・スキーマ・契約',
-    navHref: '/api/',
-    iconClass: 'bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-400',
-    badgeClass: 'bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-400',
-    badgeText: 'API',
-    accentText: 'text-brand-600 dark:text-brand-400',
-  },
-  {
-    key: 'ui',
-    label: '画面',
-    description: '画面設計・UI仕様・画面遷移に関する設計書',
-    shortDescription: '画面設計・UI仕様・画面遷移',
-    navHref: '/ui/',
-    iconClass: 'bg-sky-50 text-sky-600 dark:bg-sky-500/10 dark:text-sky-400',
-    badgeClass: 'bg-sky-50 text-sky-600 dark:bg-sky-500/10 dark:text-sky-400',
-    badgeText: '画',
-    accentText: 'text-sky-600 dark:text-sky-400',
-  },
-  {
-    key: 'guide',
-    label: 'ガイド',
-    description: '執筆ガイドライン・テンプレート・規約',
-    shortDescription: '執筆ガイドライン・テンプレート・規約',
-    navHref: '/guide/',
-    iconClass: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400',
-    badgeClass: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400',
-    badgeText: 'G',
-    accentText: 'text-emerald-600 dark:text-emerald-400',
-  },
-  {
-    key: 'db',
-    label: 'DB',
-    description: 'スキーマ・テーブル・インデックス・移行に関する設計書',
-    shortDescription: 'スキーマ・テーブル・インデックス',
-    navHref: '/db/',
-    iconClass: 'bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400',
-    badgeClass: 'bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400',
-    badgeText: 'DB',
-    accentText: 'text-violet-600 dark:text-violet-400',
-  },
-]
 
 // ステータス → バッジクラス（DESIGN.md §4 / §12）
 export const statusMeta: Record<DocStatus, { class: string; dot: string }> = {
