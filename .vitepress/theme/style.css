@@ -42,18 +42,44 @@ mark {
 }
 
 /* doc 本文（<Content /> = Markdown）。カスタムテーマなので標準スタイルを自前で用意 */
-.prose-doc h2 { font-size: 1.75rem; font-weight: 700; color: #0f172a; letter-spacing: -.01em; margin: 2.4em 0 .7em; padding-top: .2em; border-top: 1px solid #f1f5f9; scroll-margin-top: 90px; }
-.prose-doc h3 { font-size: 1.2rem; font-weight: 600; color: #0f172a; margin: 1.8em 0 .5em; scroll-margin-top: 90px; }
+.prose-doc h2 { position: relative; font-size: 1.75rem; font-weight: 700; color: #0f172a; letter-spacing: -.01em; margin: 2.4em 0 .7em; padding: .15em 0 .15em .85em; scroll-margin-top: 90px; }
+.prose-doc h2::before { content: ""; position: absolute; left: 0; top: .28em; width: 5px; height: 1.35em; background: #7dd3fc; border-radius: 3px; }
+.prose-doc h3 { font-size: 1.2rem; font-weight: 600; color: #0f172a; margin: 1em 0 .5em; scroll-margin-top: 90px; }
+.prose-doc h3::before { content: "▼"; color: #0f172a; font-size: .75em; margin-right: .45em; vertical-align: .05em; }
 .prose-doc h4 { font-size: 1rem; font-weight: 600; color: #0f172a; margin: 1.4em 0 .4em; }
 .prose-doc p { margin: .8em 0; color: #334155; line-height: 1.8; }
 .prose-doc ul, .prose-doc ol { margin: .8em 0; padding-left: 1.4em; }
+.prose-doc ul { list-style: none; padding-left: 1.1em; }
+.prose-doc ul ul { padding-left: .2em; margin: .2em 0; }
+.prose-doc ul > li { position: relative; padding-left: 1.2em; font-size: 1.05rem; }
+.prose-doc ul ul > li { padding-left: 1em; font-size: .92rem; }
+.prose-doc ul > li::before { content: "»"; position: absolute; left: 0; top: 0; color: #64748b; font-weight: 700; }
+.prose-doc ul ul > li::before { content: ""; position: absolute; left: 0; top: .55em; width: 7px; height: 7px; border-radius: 99px; background: #64748b; }
 .prose-doc li { margin: .4em 0; color: #334155; line-height: 1.7; }
 .prose-doc a { color: #4f46e5; text-decoration: none; border-bottom: 1px solid #c7d2fe; }
 .prose-doc a:hover { border-color: #4f46e5; }
 .prose-doc strong { color: #0f172a; font-weight: 600; }
 .prose-doc :not(pre) > code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; background: #f1f5f9; color: #4f46e5; padding: .12em .4em; border-radius: 5px; }
-.prose-doc pre { background: #0f172a; color: #e2e8f0; border-radius: 12px; padding: 18px 20px; overflow-x: auto; font-size: 13.5px; line-height: 1.7; margin: 1.2em 0; }
+.prose-doc pre { background: #0f172a; color: var(--shiki-dark, #e1e4e8); border-radius: 12px; padding: 18px 20px; overflow-x: auto; font-size: 13.5px; line-height: 1.7; margin: 1.2em 0; }
 .prose-doc pre code { font-family: 'JetBrains Mono', ui-monospace, monospace; background: none; color: inherit; padding: 0; font-size: inherit; }
+.prose-doc pre code span { color: var(--shiki-dark); }
+
+/* コードブロックの言語ラベル（div.language-* でラップされる） */
+.prose-doc div[class*="language-"] { position: relative; margin: 1.2em 0; }
+.prose-doc div[class*="language-"] > pre { margin: 0; }
+.prose-doc div[class*="language-"] > .lang { position: absolute; top: 7px; right: 12px; font: 600 11px/1 'JetBrains Mono', ui-monospace, monospace; letter-spacing: .05em; text-transform: uppercase; color: #94a3b8; z-index: 2; pointer-events: none; transition: opacity .15s ease; }
+
+/* コードブロックのコピーボタン（クリックでコピー、.copied でチェック表示） */
+.prose-doc div[class*="language-"] > .copy { position: absolute; top: 4px; right: 4px; z-index: 3; width: 34px; height: 34px; padding: 0; border: none; border-radius: 8px; background: transparent; color: #94a3b8; cursor: pointer; opacity: 0; transition: opacity .15s ease, background-color .15s ease, color .15s ease; }
+.prose-doc div[class*="language-"]:hover > .copy,
+.prose-doc div[class*="language-"] > .copy:focus-visible { opacity: 1; }
+.prose-doc div[class*="language-"] > .copy:hover { background: rgba(255,255,255,.1); color: #e2e8f0; }
+.prose-doc div[class*="language-"] > .copy::before { content: ""; display: block; width: 16px; height: 16px; margin: auto; background-color: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z'/%3E%3C/svg%3E") center/16px no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z'/%3E%3C/svg%3E") center/16px no-repeat; }
+.prose-doc div[class*="language-"] > .copy.copied { opacity: 1; background: rgba(255,255,255,.1); color: #4ade80; }
+.prose-doc div[class*="language-"] > .copy.copied::before { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E"); mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E"); }
+/* hover/focus 時は言語ラベルを隠してボタンと重ならないように */
+.prose-doc div[class*="language-"]:hover > .copy + .lang,
+.prose-doc div[class*="language-"] > .copy:focus-visible + .lang { opacity: 0; }
 .prose-doc blockquote { border-left: 3px solid #c7d2fe; padding-left: 1em; color: #64748b; margin: 1.2em 0; }
 .prose-doc table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 1.2em 0; }
 .prose-doc table th, .prose-doc table td { border-bottom: 1px solid #e2e8f0; padding: 10px 14px; text-align: left; vertical-align: top; }
@@ -61,18 +87,52 @@ mark {
 .prose-doc table td code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; color: #4f46e5; }
 .prose-doc hr { border: none; border-top: 1px solid #e2e8f0; margin: 2em 0; }
 
+/* doc 本文: コンテナ（::: tip など）。カスタムテーマなので標準スタイルを自前で用意 */
+.prose-doc .custom-block { margin: 1.3em 0; padding: .9em 1.1em; border-left: 4px solid #94a3b8; border-radius: 8px; background: #f8fafc; }
+.prose-doc .custom-block .custom-block-title { font-weight: 700; font-size: .82em; letter-spacing: .04em; margin-bottom: .35em; }
+.prose-doc .custom-block > :first-child { margin-top: 0; }
+.prose-doc .custom-block > :last-child { margin-bottom: 0; }
+.prose-doc .custom-block.tip { border-left-color: #10b981; background: #ecfdf5; }
+.prose-doc .custom-block.tip .custom-block-title { color: #047857; }
+.prose-doc .custom-block.info { border-left-color: #38bdf8; background: #f0f9ff; }
+.prose-doc .custom-block.info .custom-block-title { color: #0369a1; }
+.prose-doc .custom-block.warning { border-left-color: #f59e0b; background: #fffbeb; }
+.prose-doc .custom-block.warning .custom-block-title { color: #b45309; }
+.prose-doc .custom-block.danger { border-left-color: #ef4444; background: #fef2f2; }
+.prose-doc .custom-block.danger .custom-block-title { color: #b91c1c; }
+.prose-doc .custom-block.details { border-left-color: #94a3b8; background: #f8fafc; }
+.prose-doc .custom-block.details .custom-block-title { color: #334155; }
+
 /* doc 本文: dark */
 .dark .prose-doc h2, .dark .prose-doc h3, .dark .prose-doc h4 { color: #f1f5f9; }
-.dark .prose-doc h2 { border-top-color: #1e293b; }
+.dark .prose-doc h2::before { background: #38bdf8; }
+.dark .prose-doc ul > li::before { color: #64748b; }
+.dark .prose-doc ul ul > li::before { background: #64748b; }
+.dark .prose-doc h3::before { color: #f1f5f9; }
 .dark .prose-doc p, .dark .prose-doc li { color: #cbd5e1; }
 .dark .prose-doc strong { color: #f1f5f9; }
 .dark .prose-doc :not(pre) > code { background: #1e293b; color: #a5b4fc; }
+.dark .prose-doc pre { background: #1e293b; color: var(--shiki-dark, #e1e4e8); }
+.dark .prose-doc pre code span { color: var(--shiki-dark); }
 .dark .prose-doc a { color: #a5b4fc; border-bottom-color: #4f46e5; }
 .dark .prose-doc blockquote { border-left-color: #4f46e5; color: #94a3b8; }
 .dark .prose-doc table th { background: #1e293b; color: #94a3b8; }
 .dark .prose-doc table th, .dark .prose-doc table td { border-bottom-color: #1e293b; }
 .dark .prose-doc table td code { color: #a5b4fc; }
 .dark .prose-doc hr { border-top-color: #1e293b; }
+
+/* doc 本文: コンテナ dark */
+.dark .prose-doc .custom-block { background: #1e293b; }
+.dark .prose-doc .custom-block.tip { border-left-color: #34d399; background: rgba(16,185,129,.14); }
+.dark .prose-doc .custom-block.tip .custom-block-title { color: #6ee7b7; }
+.dark .prose-doc .custom-block.info { border-left-color: #38bdf8; background: rgba(56,189,248,.14); }
+.dark .prose-doc .custom-block.info .custom-block-title { color: #7dd3fc; }
+.dark .prose-doc .custom-block.warning { border-left-color: #fbbf24; background: rgba(245,158,11,.14); }
+.dark .prose-doc .custom-block.warning .custom-block-title { color: #fcd34d; }
+.dark .prose-doc .custom-block.danger { border-left-color: #f87171; background: rgba(239,68,68,.14); }
+.dark .prose-doc .custom-block.danger .custom-block-title { color: #fca5a5; }
+.dark .prose-doc .custom-block.details { border-left-color: #475569; background: #1e293b; }
+.dark .prose-doc .custom-block.details .custom-block-title { color: #cbd5e1; }
 
 /* TOC（on-this-page） */
 .toc-link { display: block; padding: 5px 10px; border-radius: 6px; font-size: 13px; color: #64748b; line-height: 1.4; border-left: 2px solid transparent; }
