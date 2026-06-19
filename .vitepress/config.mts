@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitepress'
 import tailwindcss from '@tailwindcss/vite'
 import container from 'markdown-it-container'
+import type Token from 'markdown-it/lib/token.mjs'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -27,14 +28,14 @@ export default defineConfig({
   markdown: {
     config(md) {
       md.use(container, 'note', {
-        render(tokens, idx) {
+        render(tokens: Token[], idx: number) {
           return tokens[idx].nesting === 1
             ? '<div class="custom-block note"><p class="custom-block-title">注記</p>\n'
             : '</div>\n'
         }
       })
       md.use(container, 'card', {
-        render(tokens, idx) {
+        render(tokens: Token[], idx: number) {
           const m = tokens[idx]
           if (m.nesting === 1) {
             const title = m.info.trim().replace(/^card\b\s*/i, '').trim()
